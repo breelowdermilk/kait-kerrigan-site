@@ -218,6 +218,15 @@ export const youtubePerformances = [
 // Export Spotify album data
 export const spotifyAlbums = [
   {
+    id: "great-gatsby-broadway",
+    title: "The Great Gatsby - A New Musical (Original Broadway Cast Recording)",
+    artist: "Original Broadway Cast",
+    year: "2024",
+    coverImage: "/src/assets/images/media/gatsby-album.png",
+    spotifyUrl: "https://open.spotify.com/album/1ROa0bSRzWi67kUyzfyfq6",
+    spotifyId: "1ROa0bSRzWi67kUyzfyfq6"
+  },
+  {
     id: "mad-ones-cast",
     title: "The Mad Ones",
     artist: "Studio Cast Recording",

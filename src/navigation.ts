@@ -4,7 +4,7 @@ export const headerData = {
   links: [
     { text: 'Home', href: getPermalink('/') },
     { text: 'About', href: getPermalink('/about') },
-    { text: 'Work', href: getPermalink('/work') },
+    { text: 'Shows', href: getPermalink('/shows') },
     { text: 'Songs', href: getPermalink('/songs') },
     { text: 'Media', href: getPermalink('/media') },
     { text: 'Contact', href: getPermalink('/contact') },
@@ -19,7 +19,7 @@ export const footerData = {
       links: [
         { text: 'Home', href: getPermalink('/') },
         { text: 'About', href: getPermalink('/about') },
-        { text: 'Work', href: getPermalink('/work') },
+        { text: 'Shows', href: getPermalink('/shows') },
         { text: 'Songs', href: getPermalink('/songs') },
         { text: 'Media', href: getPermalink('/media') },
         { text: 'Contact', href: getPermalink('/contact') },

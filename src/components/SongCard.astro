@@ -8,7 +8,7 @@ const data = song.data;
 ---
 
 <article class="song-card">
-  <a href={`/songs/${data.slug}`} class="title">{data.title}</a>
+  <a href={`/songs/${song.slug}`} class="title">{data.title}</a>
   {
     data.show && (
       <div class="meta">

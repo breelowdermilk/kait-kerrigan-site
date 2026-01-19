@@ -1,27 +1,39 @@
-/* Kait Kerrigan - Editorial/Literary Theme */
+/* Kait Kerrigan - Warm Editorial Theme
+   Color palette derived from hero photo:
+   - Mustard/ochre sweater → warm gold accents
+   - Warm gray background → sophisticated neutral
+   - Auburn hair → copper/bronze touches
+   - Clean white for content areas
+*/
 
-/* Font Imports */
+/* Font Imports - Elegant theatrical typography */
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
-/* CSS Variables */
+/* CSS Variables - Warm Palette */
 :root {
-  /* Primary Colors - Navy & Gold */
-  --navy-primary: #1a365d;
-  --navy-hover: #2c5282;
-  --gold-accent: #d69e2e;
-  --gold-hover: #b7881c;
+  /* Primary - Warm Gold (from sweater/watch) */
+  --gold-primary: #c9a227;
+  --gold-hover: #b8922a;
+  --gold-light: #e8d49a;
 
-  /* Background Colors */
-  --bg-cream: #faf8f5;
+  /* Accent - Rich Ochre/Copper */
+  --ochre: #c47f17;
+  --copper: #a65d1a;
+
+  /* Warm Neutrals */
+  --charcoal: #3d3632;      /* Warm charcoal for text */
+  --charcoal-light: #5a524c;
+  --warm-gray: #6b6360;
+  --gray-medium: #8a8380;
+
+  /* Backgrounds */
   --bg-white: #ffffff;
+  --bg-cream: #fdfcfa;      /* Very subtle warm white */
+  --bg-hero-gray: #5a5a5a;  /* Matches photo background */
 
-  /* Text Colors */
-  --text-charcoal: #2d3748;
-  --text-medium: #4a5568;
-  --text-light: #718096;
-
-  /* Border */
-  --border-subtle: #e2e0dc;
+  /* Borders */
+  --border-light: #e8e4e0;
+  --border-gold: rgba(201, 162, 39, 0.3);
 
   /* Font Variables */
   --font-display: 'Cormorant Garamond', Georgia, serif;
@@ -31,30 +43,28 @@
 
 /* Base Styles */
 body {
-  background: var(--bg-cream);
+  background: var(--bg-white);
   font-family: var(--font-body);
-  color: var(--text-medium);
+  color: var(--charcoal);
   font-size: 16px;
   line-height: 1.7;
 }
 
-/* Main Titles (Hero/Display) */
+/* Main Titles (Hero/Display) - Warm Gold */
 .main-title, .hero-title {
   font-family: var(--font-display);
   font-size: 4.5rem;
   font-weight: 300;
   letter-spacing: 0.02em;
-  color: var(--gold-accent);
-  text-align: center;
-  text-shadow: 1px 1px 2px rgba(26, 54, 93, 0.1);
+  color: var(--gold-primary);
 }
 
-/* H1 Headings - Page titles */
+/* H1 Headings - Page titles in warm charcoal */
 .bree-h1 {
   font-family: var(--font-display);
   font-size: 3.5rem;
   font-weight: 400;
-  color: var(--navy-primary);
+  color: var(--charcoal);
   line-height: 1.2;
   letter-spacing: 0.01em;
 }
@@ -64,16 +74,16 @@ body {
   font-family: var(--font-display);
   font-size: 3rem;
   font-weight: 400;
-  color: var(--navy-primary);
+  color: var(--gold-primary);
   line-height: 1.2;
   letter-spacing: 0.01em;
 }
 
-/* H2-H4 Headings */
+/* H2-H4 Headings - Warm charcoal */
 .bree-h2, .bree-h3, .bree-h4 {
   font-family: var(--font-ui);
   font-weight: 600;
-  color: var(--text-charcoal);
+  color: var(--charcoal);
   line-height: 1.3;
   letter-spacing: 0.02em;
 }
@@ -82,18 +92,18 @@ body {
 .bree-h3 { font-size: 1.5rem; }
 .bree-h4 { font-size: 1.25rem; font-weight: 500; }
 
-/* Header with Cream Background */
+/* Header - Warm cream background */
 .bree-header {
   background: var(--bg-cream);
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-light);
   position: sticky;
   top: 0;
   z-index: 50;
   transition: all 0.3s ease;
 }
 
-/* Header text styling */
+/* Header text - Gold primary */
 .bree-header h1,
 .bree-header nav a {
   font-family: var(--font-ui) !important;
@@ -102,74 +112,57 @@ body {
   transition: color 0.3s ease !important;
 }
 
-/* Default header state */
 .bree-header h1,
 .bree-header nav a {
-  color: var(--navy-primary) !important;
+  color: var(--gold-primary) !important;
 }
 
-/* Light header state (when scrolled) */
-.bree-header.header-scrolled h1,
-.bree-header.header-scrolled nav a {
-  color: var(--text-charcoal) !important;
+.bree-header nav a:hover {
+  color: var(--ochre) !important;
 }
 
-/* Support alternate class names */
-.bree-header.nav-scrolled h1,
-.bree-header.nav-scrolled nav a { color: var(--text-charcoal) !important; }
-.bree-header.nav-scrolled nav a:hover { color: var(--gold-accent) !important; }
-.bree-header.nav-top h1,
-.bree-header.nav-top nav a { color: var(--navy-primary) !important; }
-
-/* Logo styling */
+/* Logo styling - Gold */
 .bree-header .logo-text {
-  color: var(--navy-primary) !important;
+  color: var(--gold-primary) !important;
   font-family: var(--font-display) !important;
   font-weight: 400 !important;
 }
 
-/* Hover states */
-.bree-header nav a:hover {
-  color: var(--gold-accent) !important;
-}
-
-.bree-header.header-scrolled nav a:hover {
-  color: var(--gold-hover) !important;
-}
-
 /* Scrolled header state */
-#header.scroll { background: var(--bg-white) !important; color: var(--text-charcoal) !important; }
-#header.scroll nav a { color: var(--text-charcoal) !important; }
-#header.scroll nav a:hover { color: var(--gold-accent) !important; }
-#header.scroll .logo-text, #header.scroll h1 { color: var(--navy-primary) !important; }
-#header.scroll .aw-link-active { color: var(--navy-primary) !important; }
-#header.scroll svg, #header.scroll .icon { color: var(--navy-primary) !important; }
+#header.scroll {
+  background: var(--bg-white) !important;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+}
+#header.scroll nav a { color: var(--gold-primary) !important; }
+#header.scroll nav a:hover { color: var(--ochre) !important; }
+#header.scroll .logo-text, #header.scroll h1 { color: var(--gold-primary) !important; }
 
-/* Primary Buttons - Navy with gold hover */
+/* Primary Buttons - Gold with warm charcoal text */
 .btn-primary {
-  background: var(--navy-primary);
-  color: var(--bg-cream);
+  background: var(--gold-primary);
+  color: var(--bg-white);
   padding: 12px 28px;
   border-radius: 4px;
-  font-weight: 500;
+  font-weight: 600;
   font-family: var(--font-ui);
   transition: all 0.2s ease;
-  border: 2px solid var(--navy-primary);
+  border: 2px solid var(--gold-primary);
   cursor: pointer;
 }
 
 .btn-primary:hover {
-  background: var(--navy-hover);
-  border-color: var(--gold-accent);
+  background: var(--gold-hover);
+  border-color: var(--gold-hover);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(201, 162, 39, 0.3);
 }
 
 /* Outline Buttons */
 .btn-outline {
   background: transparent;
-  color: var(--navy-primary);
+  color: var(--gold-primary);
   padding: 12px 28px;
-  border: 2px solid var(--navy-primary);
+  border: 2px solid var(--gold-primary);
   border-radius: 4px;
   font-weight: 500;
   font-family: var(--font-ui);
@@ -178,47 +171,49 @@ body {
 }
 
 .btn-outline:hover {
-  background: var(--navy-primary);
-  color: var(--bg-cream);
+  background: var(--gold-primary);
+  color: var(--bg-white);
 }
 
-/* Links */
+/* Links - Gold with subtle underline */
 .bree-link {
-  color: var(--navy-primary);
+  color: var(--gold-primary);
   text-decoration: none;
   transition: color 0.2s ease;
-  border-bottom: 1px solid var(--gold-accent);
+  border-bottom: 1px solid var(--border-gold);
 }
 
 .bree-link:hover {
-  color: var(--gold-accent);
-  border-bottom-color: var(--gold-hover);
+  color: var(--ochre);
+  border-bottom-color: var(--ochre);
 }
 
-/* Cards with subtle gold border */
+/* Cards */
 .card-glass {
   background: var(--bg-white);
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 20px rgba(26, 54, 93, 0.06),
-              0 1px 4px rgba(214, 158, 46, 0.04);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 4px 20px rgba(61, 54, 50, 0.06);
   border-radius: 8px;
+}
+
+.card-glass:hover {
+  border-color: var(--border-gold);
+  box-shadow: 0 8px 30px rgba(201, 162, 39, 0.1);
 }
 
 /* Media cards */
 .media-card {
   background: var(--bg-white);
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 8px 30px rgba(26, 54, 93, 0.08),
-              0 2px 8px rgba(214, 158, 46, 0.03);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 8px 30px rgba(61, 54, 50, 0.08);
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .media-card:hover {
   transform: translateY(-4px);
-  border-color: var(--gold-accent);
-  box-shadow: 0 16px 48px rgba(26, 54, 93, 0.12),
-              0 4px 16px rgba(214, 158, 46, 0.08);
+  border-color: var(--gold-primary);
+  box-shadow: 0 16px 48px rgba(201, 162, 39, 0.12);
 }
 
 /* Section containers */
@@ -235,10 +230,10 @@ body {
 /* Featured content styling */
 .featured-content {
   background: linear-gradient(135deg,
-    rgba(26, 54, 93, 0.02) 0%,
-    rgba(250, 248, 245, 0.5) 50%,
-    rgba(214, 158, 46, 0.02) 100%);
-  border: 1px solid var(--border-subtle);
+    rgba(201, 162, 39, 0.03) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(196, 127, 23, 0.02) 100%);
+  border: 1px solid var(--border-light);
   border-radius: 8px;
   padding: 48px;
 }
@@ -247,7 +242,7 @@ body {
 hr {
   border: none;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-accent), transparent);
+  background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
   margin: 2rem 0;
 }
 
@@ -256,39 +251,29 @@ blockquote {
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-style: italic;
-  color: var(--text-charcoal);
-  border-left: 3px solid var(--gold-accent);
+  color: var(--charcoal);
+  border-left: 3px solid var(--gold-primary);
   padding-left: 1.5rem;
   margin: 2rem 0;
 }
 
-blockquote::before {
-  content: '"';
-  font-size: 3rem;
-  color: var(--gold-accent);
-  line-height: 0;
-  vertical-align: -0.5rem;
-  margin-right: 0.25rem;
-}
-
-/* Award badges */
+/* Award badges - Gold themed */
 .award-badge {
   display: inline-block;
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-family: var(--font-ui);
   font-weight: 500;
-  color: var(--gold-hover);
-  border: 1px solid var(--gold-accent);
-  border-radius: 20px;
-  background: rgba(214, 158, 46, 0.08);
+  color: var(--ochre);
+  border: 1px solid var(--gold-primary);
+  border-radius: 24px;
+  background: rgba(201, 162, 39, 0.08);
 }
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .main-title, .hero-title {
     font-size: 2.75rem;
-    letter-spacing: 0.01em;
   }
 
   .bree-h1 {
@@ -306,35 +291,6 @@ blockquote::before {
   .media-container {
     padding: 0 16px;
   }
-
-  blockquote {
-    font-size: 1.25rem;
-  }
 }
 
-/* Dark mode compatibility */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-cream: #1a202c;
-    --bg-white: #2d3748;
-    --text-charcoal: #f7fafc;
-    --text-medium: #e2e8f0;
-    --text-light: #a0aec0;
-    --border-subtle: #4a5568;
-  }
-
-  .card-glass, .media-card {
-    background: var(--bg-white);
-    border-color: var(--border-subtle);
-  }
-
-  .bree-header {
-    background: var(--bg-cream);
-  }
-
-  .bree-header h1,
-  .bree-header nav a,
-  .bree-header .logo-text {
-    color: var(--gold-accent) !important;
-  }
-}
+/* No dark mode - light only */
