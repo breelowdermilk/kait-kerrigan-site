@@ -1,0 +1,172 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Work',
+  description: 'Theatrical works by Kait Kerrigan - Broadway, West End, Off-Broadway, Regional, and Digital productions',
+};
+
+interface Show {
+  title: string;
+  role: string;
+  venue?: string;
+  year?: string;
+  status?: string;
+  collaborators?: string;
+}
+
+interface Category {
+  name: string;
+  shows: Show[];
+}
+
+const categories: Category[] = [
+  {
+    name: 'Broadway',
+    shows: [
+      { title: 'The Great Gatsby', role: 'Book', venue: 'Broadway Theatre', year: '2024', collaborators: 'Music by Jason Howland' },
+    ],
+  },
+  {
+    name: 'West End',
+    shows: [
+      { title: 'The Great Gatsby', role: 'Book', venue: 'West End', year: '2024' },
+      { title: "The Time Traveller's Wife", role: 'Book & Lyrics', venue: 'Apollo Theatre', year: '2023', collaborators: 'Music by Dave Stewart' },
+    ],
+  },
+  {
+    name: 'Off-Broadway',
+    shows: [
+      { title: 'The Mad Ones', role: 'Book & Lyrics', venue: 'Second Stage', year: '2017', collaborators: 'Music by Bree Lowdermilk' },
+      { title: 'Henry and Mudge', role: 'Book & Lyrics', venue: 'Lucille Lortel Theatre', collaborators: 'Music by Bree Lowdermilk' },
+    ],
+  },
+  {
+    name: '2025 Productions',
+    shows: [
+      { title: 'The Heart', role: 'Book & Lyrics', venue: 'La Jolla Playhouse', year: '2025' },
+      { title: 'The Great Gatsby', role: 'Book', venue: 'Seoul', year: '2025' },
+      { title: 'The Mad Ones', role: 'Book & Lyrics', venue: 'London', year: '2025' },
+      { title: 'Indigo', role: 'Book & Lyrics', venue: 'UK Tour', year: '2025' },
+    ],
+  },
+  {
+    name: 'Regional',
+    shows: [
+      { title: 'Justice', role: 'Book & Lyrics', venue: 'Arizona Theatre Co, Marin Theatre', collaborators: 'Music by Bree Lowdermilk' },
+      { title: 'Earthrise', role: 'Book & Lyrics', venue: 'Kennedy Center', collaborators: 'Music by Bree Lowdermilk' },
+      { title: 'Father/Daughter', role: 'Book & Lyrics', collaborators: 'Music by Bree Lowdermilk', status: 'Edgerton Award Winner' },
+      { title: 'Imaginary Love', role: 'Book & Lyrics', collaborators: 'Music by Bree Lowdermilk' },
+      { title: 'Disaster Relief', role: 'Book & Lyrics', collaborators: 'Music by Bree Lowdermilk' },
+    ],
+  },
+  {
+    name: 'Digital',
+    shows: [
+      { title: 'A Killer Party', role: 'Book & Lyrics', year: '2020', collaborators: 'Music by Bree Lowdermilk' },
+    ],
+  },
+];
+
+const albums = [
+  { title: 'The Great Gatsby (Original Broadway Cast Recording)', year: '2024' },
+  { title: 'The Mad Ones (Original Cast Recording)', year: '2017', note: '30+ million streams' },
+  { title: 'Kerrigan-Lowdermilk Live', year: '2013' },
+  { title: 'Our First Mistake', year: '2010', note: '#1 Singer/Songwriter chart' },
+];
+
+const awards = [
+  { name: 'Kleban Award', category: 'Libretto' },
+  { name: 'Jonathan Larson Award', category: 'Lyric-writing' },
+  { name: 'Most Promising Lyricist', category: 'Theatre Hall of Fame' },
+  { name: 'Edgerton Award', category: 'Father/Daughter' },
+];
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 mx-auto max-w-6xl lg:px-8 lg:py-20">
+    <header class="max-w-3xl mx-auto text-center mb-16">
+      <h1 class="bree-h1-small mb-4">Work</h1>
+      <p class="text-lg text-gray-600">Theatrical works, albums, and awards</p>
+    </header>
+
+    <!-- Awards Section -->
+    <div class="mb-16">
+      <h2 class="bree-h2 mb-6 text-center">Awards</h2>
+      <div class="flex flex-wrap justify-center gap-4">
+        {awards.map((award) => (
+          <span class="award-badge">
+            {award.name} <span class="opacity-75">({award.category})</span>
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Shows by Category -->
+    <div class="space-y-16">
+      {categories.map((category) => (
+        <div>
+          <h2 class="bree-h2 mb-8 pb-2 border-b border-gray-200">{category.name}</h2>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {category.shows.map((show) => (
+              <div class="card-glass p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">{show.title}</h3>
+                <p class="text-sm text-gray-600 mb-2">{show.role}</p>
+                {show.venue && <p class="text-sm text-gray-500">{show.venue}</p>}
+                {show.year && <p class="text-sm text-gray-500">{show.year}</p>}
+                {show.collaborators && <p class="text-xs text-gray-400 mt-2 italic">{show.collaborators}</p>}
+                {show.status && <span class="inline-block mt-2 text-xs px-2 py-1 bg-amber-50 text-amber-700 rounded">{show.status}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Albums Section -->
+    <div class="mt-20">
+      <h2 class="bree-h2 mb-8 pb-2 border-b border-gray-200">Albums</h2>
+      <div class="grid gap-6 md:grid-cols-2">
+        {albums.map((album) => (
+          <div class="card-glass p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">{album.title}</h3>
+            <p class="text-sm text-gray-500">{album.year}</p>
+            {album.note && <p class="text-sm text-amber-600 mt-1">{album.note}</p>}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Viral Songs Note -->
+    <div class="mt-16 text-center p-8 bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg">
+      <p class="text-lg text-gray-700">
+        Songs <strong>"Run Away with Me"</strong> and <strong>"Go Tonight"</strong> have become viral sensations with thousands of fan performance videos online.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .card-glass {
+    background: white;
+    border: 1px solid #e2e0dc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .card-glass:hover {
+    border-color: #d69e2e;
+    box-shadow: 0 4px 12px rgba(26, 54, 93, 0.08);
+  }
+
+  .award-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #b7881c;
+    border: 1px solid #d69e2e;
+    border-radius: 24px;
+    background: rgba(214, 158, 46, 0.08);
+  }
+</style>

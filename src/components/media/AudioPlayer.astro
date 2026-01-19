@@ -1,0 +1,138 @@
+---
+import defaultImg from '~/assets/images/default.jpg';
+
+export interface Track {
+  title: string;
+  src: string;
+  artist?: string;
+  cover?: string;
+  duration?: string;
+  notes?: string;
+}
+
+export interface Props {
+  tracks: Track[];
+}
+
+const { tracks = [] } = Astro.props as Props;
+const initialIndex = 0;
+---
+<div class="w-full max-w-3xl mx-auto">
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 shadow-sm">
+    <div class="flex items-center gap-3">
+      <button id="ap-prev" type="button" class="px-2 py-1 text-sm rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" aria-label="Previous track">◀</button>
+      <button id="ap-next" type="button" class="px-2 py-1 text-sm rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" aria-label="Next track">▶</button>
+      <div class="flex-1 min-w-0">
+        <div id="ap-title" class="text-sm font-medium truncate">{tracks[initialIndex]?.title ?? 'Untitled'}</div>
+        {tracks[initialIndex]?.artist && (
+          <div id="ap-artist" class="text-xs text-gray-500 dark:text-gray-400 truncate">{tracks[initialIndex]?.artist}</div>
+        )}
+        <div id="ap-notes" class={`text-xs text-gray-500 dark:text-gray-400 truncate mt-1 ${tracks[initialIndex]?.notes ? '' : 'hidden'}`}>{tracks[initialIndex]?.notes ?? ''}</div>
+      </div>
+    </div>
+    <div class="mt-3">
+      {tracks.length > 0 ? (
+        <audio id="ap-audio" src={tracks[initialIndex]?.src} controls class="w-full" aria-label="Audio player" />
+      ) : (
+        <div class="text-sm text-gray-500">No tracks available.</div>
+      )}
+      <div id="ap-error" class="hidden mt-2 text-sm text-rose-600">Couldn’t load this track. Try another.</div>
+    </div>
+  </div>
+
+  {tracks.length > 0 && (
+    <div class="mt-4">
+      <h3 class="text-sm font-semibold mb-2">Playlist</h3>
+      <ul class="divide-y divide-gray-200 dark:divide-gray-700 rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden" role="list">
+        {tracks.map((t, i) => (
+          <li class="bg-white dark:bg-gray-900">
+            <button
+              type="button"
+              class={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${i === initialIndex ? 'bg-gray-50 dark:bg-gray-800' : ''}`}
+              data-index={i}
+              aria-current={i === initialIndex ? 'true' : 'false'}
+            >
+              <div class="flex items-center gap-3">
+                <img src={t.cover || defaultImg} alt="" class="h-10 w-10 rounded object-cover" loading="lazy" />
+                <div class="min-w-0 flex-1">
+                  <div class="font-medium truncate">{t.title}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 truncate">{t.artist ?? ''}</div>
+                </div>
+                {t.duration && <div class="text-xs tabular-nums text-gray-500 dark:text-gray-400">{t.duration}</div>}
+              </div>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</div>
+
+<script>
+  const tracks = JSON.parse('{JSON.stringify(tracks)}');
+
+  const audioEl = document.getElementById('ap-audio') as HTMLAudioElement | null;
+  const errorEl = document.getElementById('ap-error') as HTMLDivElement | null;
+  const titleEl = document.getElementById('ap-title') as HTMLDivElement | null;
+  const artistEl = document.getElementById('ap-artist') as HTMLDivElement | null;
+  const notesEl = document.getElementById('ap-notes') as HTMLDivElement | null;
+  const prevBtn = document.getElementById('ap-prev') as HTMLButtonElement | null;
+  const nextBtn = document.getElementById('ap-next') as HTMLButtonElement | null;
+  const listButtons = Array.from(document.querySelectorAll('[data-index]')) as HTMLButtonElement[];
+
+  let idx = {initialIndex};
+
+  function setActiveButton(index: number) {
+    for (const btn of listButtons) {
+      const isActive = Number(btn.dataset.index) === index;
+      btn.setAttribute('aria-current', isActive ? 'true' : 'false');
+      btn.classList.toggle('bg-gray-50', isActive);
+      btn.classList.toggle('dark:bg-gray-800', isActive);
+    }
+  }
+
+  function clearError() {
+    if (errorEl) errorEl.classList.add('hidden');
+  }
+
+  function showError() {
+    if (errorEl) errorEl.classList.remove('hidden');
+  }
+
+  function selectTrack(index: number, autoplay = false) {
+    if (!audioEl || !tracks.length) return;
+    idx = (index + tracks.length) % tracks.length;
+    const t = tracks[idx];
+    clearError();
+    audioEl.src = t.src;
+    if (titleEl) titleEl.textContent = t.title || 'Untitled';
+    if (artistEl) artistEl.textContent = t.artist || '';
+    if (notesEl) {
+      if (t.notes) {
+        notesEl.textContent = t.notes;
+        notesEl.classList.remove('hidden');
+      } else {
+        notesEl.textContent = '';
+        notesEl.classList.add('hidden');
+      }
+    }
+    setActiveButton(idx);
+    if (autoplay) {
+      audioEl.play().catch(() => {/* ignore autoplay errors */});
+    }
+  }
+
+  prevBtn?.addEventListener('click', () => selectTrack(idx - 1, true));
+  nextBtn?.addEventListener('click', () => selectTrack(idx + 1, true));
+
+  for (const btn of listButtons) {
+    btn.addEventListener('click', () => {
+      const i = Number(btn.dataset.index);
+      selectTrack(i, true);
+    });
+  }
+
+  audioEl?.addEventListener('error', () => showError());
+  audioEl?.addEventListener('ended', () => selectTrack(idx + 1, true));
+</script>
+

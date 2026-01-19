@@ -1,0 +1,187 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import GLightboxInit from '~/components/media/GLightboxInit.astro';
+
+const metadata = {
+  title: 'Coven of Phoenix by Bree Lowdermilk',
+  description: 'Expanded layout for the Coven of Phoenix landing page with spotlight video and streamlined manuscript downloads.',
+  openGraph: {
+    title: 'Coven of Phoenix by Bree Lowdermilk',
+    description: 'A layout exploration featuring focused video embeds and quick manuscript access for Coven of Phoenix.',
+    type: 'website'
+  }
+};
+
+const videos = [
+  {
+    title: 'Coven of Phoenix — Part I',
+    youtubeId: 'RlOrLoA4JHE',
+    playlist: 'PLYFJozPCjXHNT7g3GLNYjCE7haf4B7etl',
+    thumbnail: '/images/coven thumbnail.png'
+  },
+  {
+    title: 'Coven of Phoenix — Part II',
+    youtubeId: 'rUAgct0MaxA',
+    playlist: 'PLYFJozPCjXHNT7g3GLNYjCE7haf4B7etl',
+    thumbnail: '/images/new magic.png',
+    overlayTitle: '"New Magic" - Lyric Video'
+  },
+  {
+    title: 'Coven of Phoenix — Part III',
+    youtubeId: '3yutUK0xO34',
+    playlist: 'PLYFJozPCjXHNT7g3GLNYjCE7haf4B7etl',
+    thumbnail: '/images/choose love.png',
+    overlayTitle: '"Choose Love" - Lyric Video'
+  }
+];
+
+const downloads = [
+  {
+    badge: 'DOCX',
+    href: '/coven/Coven-Of-Phoenix_Lowdermilk_10-13-25.docx',
+    srLabel: 'Download Coven of Phoenix manuscript as DOCX',
+    newTab: true
+  },
+  {
+    badge: 'EPUB',
+    href: '/coven/Coven-Of-Phoenix_Lowdermilk_10-13-25.epub',
+    srLabel: 'Download Coven of Phoenix manuscript as EPUB',
+    newTab: true
+  },
+  {
+    badge: 'PDF',
+    href: '/coven/Coven-Of-Phoenix_Lowdermilk_10-13-25.pdf',
+    srLabel: 'Download Coven of Phoenix manuscript as PDF',
+    newTab: true
+  }
+];
+
+const getYouTubeWatchUrl = (video) => `https://www.youtube.com/watch?v=${video.youtubeId}${video.playlist ? `&list=${video.playlist}` : ''}`;
+const getYouTubeThumbnail = (id) => `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+---
+
+<Layout metadata={metadata}>
+  <GLightboxInit profile="media" />
+
+  <section class="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 py-20 lg:px-8">
+    <header class="mx-auto max-w-3xl text-center">
+      <h1 class="bree-h1 text-5xl uppercase tracking-[0.35em] text-slate-900 dark:text-white">
+        COVEN OF PHOENIX
+      </h1>
+      <p class="text-sm font-semibold uppercase tracking-[0.3em] text-red-600 dark:text-red-400 mt-4">
+        BY BREE LOWDERMILK
+      </p>
+      <div class="space-y-2 mt-12">
+        <p class="text-xs font-medium uppercase tracking-[0.4em] text-slate-600 dark:text-slate-400">
+          YA FANTASY | 100,000 WORDS
+        </p>
+        <p class="text-xs font-medium uppercase tracking-[0.4em] text-slate-600 dark:text-slate-400">
+          WITH ORIGINAL CONCEPT ALBUM
+        </p>
+      </div>
+      <div class="space-y-2 mt-8">
+        <p class="text-xs font-medium uppercase tracking-[0.4em] text-slate-600 dark:text-slate-400">
+          Represented by Jordan Hamessley
+        </p>
+        <p class="text-xs font-medium uppercase tracking-[0.4em] text-slate-600 dark:text-slate-400">
+          Jabberwocky Literary Agency
+        </p>
+      </div>
+    </header>
+
+    <section class="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start">
+      <div class="space-y-4 lg:space-y-6">
+        <a
+          class="glightbox group relative block overflow-hidden rounded-3xl border border-slate-200 bg-slate-950 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800"
+          href={getYouTubeWatchUrl(videos[0])}
+          data-gallery="coven-videos"
+          data-title=""
+          data-type="video"
+          data-source="youtube"
+          data-poster={videos[0].thumbnail ?? getYouTubeThumbnail(videos[0].youtubeId)}
+        >
+          <div class="relative aspect-video">
+            <img
+              src={videos[0].thumbnail ?? getYouTubeThumbnail(videos[0].youtubeId)}
+              alt="About Coven of Phoenix"
+              class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="flex h-16 w-16 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-lg transition group-hover:scale-110 group-hover:bg-red-500 group-hover:text-white">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                <span class="sr-only">Play Coven of Phoenix feature video</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <div class="text-right">
+          <a
+            class="inline-block text-sm font-semibold uppercase tracking-[0.2em] text-blue-700 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200"
+            href="https://www.youtube.com/playlist?list=PLYFJozPCjXHNT7g3GLNYjCE7haf4B7etl"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View Playlist
+          </a>
+        </div>
+      </div>
+
+      <aside class="mx-auto flex w-full max-w-xs flex-col gap-6 rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900/70">
+        <h2 class="text-lg font-bold uppercase tracking-[0.35em] text-slate-800 dark:text-slate-100 text-center">
+          Manuscript Downloads
+        </h2>
+        <div class="w-full space-y-4">
+          {downloads.map((item) => (
+            <a
+              class="font-medium bg-gray-900 duration-300 hover:shadow-gray-500/30 hover:shadow-lg block text-white tracking-widest transition-shadow py-4 text-base px-6 rounded-full text-center"
+              href={item.href}
+              target={item.newTab ? '_blank' : undefined}
+              rel={item.newTab ? 'noopener noreferrer' : undefined}
+            >
+              {item.badge}
+              <span class="sr-only">{item.srLabel}</span>
+            </a>
+          ))}
+        </div>
+      </aside>
+    </section>
+
+    <section class="space-y-8">
+      <div class="grid gap-6 md:grid-cols-2">
+        {videos.slice(1).map((video) => (
+          <a
+            class="glightbox group relative block overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 shadow-lg transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800"
+            href={getYouTubeWatchUrl(video)}
+            data-gallery="coven-videos"
+            data-title=""
+            data-type="video"
+            data-source="youtube"
+            data-poster={video.thumbnail ?? getYouTubeThumbnail(video.youtubeId)}
+          >
+            <div class="relative aspect-video">
+              <img
+                src={video.thumbnail ?? getYouTubeThumbnail(video.youtubeId)}
+                alt={video.overlayTitle ?? video.title}
+                class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-lg transition group-hover:scale-110 group-hover:bg-red-500 group-hover:text-white">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  <span class="sr-only">Play video</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+  </section>
+</Layout>

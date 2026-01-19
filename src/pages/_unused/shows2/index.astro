@@ -1,0 +1,115 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import MediaTileOverlay from '~/components/media/MediaTileOverlay.astro';
+import GLightboxInit from '~/components/media/GLightboxInit.astro';
+import defaultImg from '~/assets/images/default.jpg';
+
+const shows = await getCollection('shows');
+
+// Use the same explicit order as /shows
+const showOrder = [
+  'ernxst',
+  'justice',
+  'the-mad-ones',
+  'ada-twist-scientist',
+  'republic',
+  'kill-the-boy-band',
+  'tales-from-the-bad-years',
+];
+
+const sortedShows = shows
+  .filter((s) => showOrder.includes(s.slug))
+  .sort((a, b) => showOrder.indexOf(a.slug) - showOrder.indexOf(b.slug));
+
+const metadata = {
+  title: 'Shows 2 - Titles Only',
+  description: 'Variant page: overlay shows only musical title (no credits or teaser).',
+  openGraph: { type: 'website' },
+};
+---
+<PageLayout {metadata}>
+  <GLightboxInit profile="shows" />
+  <section class="px-6 sm:px-6 max-w-7xl mx-auto">
+    <div class="py-12 md:py-16 lg:py-20 mx-auto">
+      <header class="max-w-3xl mx-auto text-center mb-12">
+        <h1 class="bree-h1-small mb-4">
+          Shows 2 (Titles Only)
+        </h1>
+        <p class="text-gray-600">Overlay contains only the title, large and centered. Credits and teaser removed.</p>
+      </header>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+        {sortedShows.map((show) => {
+          const imageUrl = show.data.heroImage || defaultImg;
+          return (
+            <MediaTileOverlay
+              title={show.data.title}
+              className="aspect-[7/8] show-tile"
+            >
+              <a
+                href={`#show-${show.slug}`}
+                class="glightbox block w-full h-full relative"
+                data-gallery="shows2"
+                data-title={show.data.title}
+                data-type="inline"
+                data-width="900"
+                data-height="720"
+              >
+                <img
+                  src={imageUrl}
+                  alt={show.data.title || 'Show poster'}
+                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </a>
+            </MediaTileOverlay>
+          );
+        })}
+      </div>
+
+      {sortedShows.length === 0 && (
+        <div class="text-center py-12">
+          <p class="text-gray-600 dark:text-gray-400">No shows available at this time.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  {/* Hidden inline modal content retained for parity, but synopses hold correct credits; overlay stays titles-only */}
+  {sortedShows.map((show) => {
+    const imageUrl = show.data.heroImage || defaultImg;
+    return (
+      <div id={`show-${show.slug}`} class="show-modal-content" style="display: none;" aria-hidden="true">
+        <div class="modal-inner">
+          <div class="modal-image-container">
+            <img src={imageUrl} alt={show.data.title || 'Show image'} class="modal-hero-image" />
+          </div>
+          <div class="modal-content-body">
+            <h2 class="modal-title">{show.data.title || 'Untitled Show'}</h2>
+            {show.data.synopsis && (
+              <div class="modal-section">
+                <p class="modal-synopsis">{show.data.synopsis}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</PageLayout>
+
+<style>
+  .show-modal-content { max-width: 900px; margin: 0 auto; max-height: 90vh; overflow-y: auto; }
+  .modal-inner { background: white; border-radius: 12px; overflow: hidden; }
+  .modal-image-container { width: 100%; max-height: 220px; overflow: hidden; background: #f3f4f6; }
+  .modal-hero-image { width: 100%; height: 100%; object-fit: cover; }
+  .modal-content-body { padding: 2rem; }
+  .modal-title { font-size: 2.5rem; font-weight: 300; margin-bottom: 1rem; color: #111827; line-height: 1.2; letter-spacing: 0.05em; font-family: var(--font-title); text-transform: uppercase; }
+  .modal-synopsis { font-size: 1.125rem; line-height: 1.75; color: #4b5563; }
+  @media (prefers-color-scheme: dark) {
+    .modal-inner { background: #1f2937; }
+    .modal-title { color: #f9fafb; }
+    .modal-synopsis { color: #d1d5db; }
+  }
+</style>

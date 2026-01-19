@@ -1,0 +1,35 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import FullBleedHero from '~/components/widgets/FullBleedHero.astro';
+---
+
+<Layout>
+  <style is:inline>
+    /* Home-only: set background blend to match hero image edges */
+    :root {
+      --site-bg-top: #faf8f5;
+      --site-bg-bottom: #f0ebe4;
+    }
+  </style>
+  <FullBleedHero
+    title="Kait Kerrigan"
+    subtitle="Bookwriter • Lyricist • Playwright"
+    actions={[
+      { variant: 'primary', text: 'About', href: '/about' },
+      { variant: 'primary', text: 'Work', href: '/work' },
+    ]}
+    imageUrl="/images/kait-hero.jpg"
+    imageUrlMobile="/images/kait-hero.jpg"
+    position="center center"
+    mobilePosition="center top"
+    overlay={0.2}
+    minVh={100}
+    mobileMinVh={100}
+    contentAlign="left"
+    contentOffsetY={0}
+    textAlign="left"
+    mobileContentAlign="center"
+    mobileContentOffsetY={0}
+    mobileTextAlign="center"
+  />
+</Layout>

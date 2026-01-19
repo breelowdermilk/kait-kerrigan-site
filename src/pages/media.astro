@@ -1,0 +1,277 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+// Page-scoped GLightbox init for Media (CDN-only)
+import { youtubePerformances, spotifyAlbums } from '~/data/media/youtube-performances.js';
+
+const metadata = {
+  title: 'Media | Bree Lowdermilk',
+  description: 'Celebrity performances and recordings of Kerrigan-Lowdermilk songs',
+  openGraph: {
+    title: 'Media | Bree Lowdermilk',
+    description: 'Watch Broadway stars perform Kerrigan-Lowdermilk songs',
+    type: 'website'
+  }
+};
+
+// Get actual image paths from existing media folder
+const getCelebrityImage = (performer, songTitle) => {
+  // Special handling for Lindsay Mendez who has different images for different songs
+  if (performer === 'Lindsay Mendez') {
+    if (songTitle === 'Avalanche') {
+      return '/images/media/lindsay-mendez-headshot.jpg';
+    } else {
+      return '/images/media/lindsay-mendez.jpeg';
+    }
+  }
+  
+  const imageMap = {
+    'Michael Arden & Andy Mientus': '/images/media/michael arden andy mientus.png',
+    'Aaron Tveit': '/images/media/aaron tveit.jpg',
+    'Jeremy Jordan': '/images/media/jeremy jordan.jpg',
+    'Rachel Zegler': '/images/media/rachel zegler.jpg',
+    'Keala Settle': '/images/media/keala settle.avif',
+    'Emma Hunton': '/images/media/go-tonight.png',
+    'Emma Hunton & Krystina Alabado': '/images/media/go-tonight.png',
+    'Sarah Hyland & Melissa Benoist': '/images/media/sarah hyland and melissa benoist.png',
+    'Colleen Ballinger': '/images/media/colleen ballinger.jpg',
+    'Colton Haynes': '/images/media/colton haynes.webp',
+    'Meghann Fahy': '/images/media/meghann fahy.png',
+    'Michael Arden': '/images/media/michael-arden.jpg',
+    'Andy Mientus': '/images/media/michael arden andy mientus.png',
+    'Andy Mientus & Colton Haynes': '/images/media/michael arden andy mientus.png',
+    'Andy Mientus & Steven Booth': '/images/media/michael arden andy mientus.png',
+    'Uzo Aduba': '/images/media/uzo aduba.webp',
+    'Sutton Foster': '/images/media/sutton foster.jpg',
+    'Lindsay Mendez & Andy Mientus': '/images/media/michael arden andy mientus.png',
+    'Andy Mientus & Krysta Rodriguez': '/images/media/michael arden andy mientus.png',
+    'Laura Osnes': '/images/media/laura-osnes.jpg',
+    'Matt Doyle': '/images/media/matt-doyle.jpg',
+    'Katie Thompson': '/images/media/katie-thompson.jpg',
+    'Mandy Gonzalez': null,
+    'Carrie Manolakos': null
+  };
+  
+  for (const [key, path] of Object.entries(imageMap)) {
+    if (performer.includes(key)) {
+      return path;
+    }
+  }
+  return null;
+};
+
+// Get YouTube thumbnail as fallback
+const getYouTubeThumbnail = (youtubeId) => {
+  if (!youtubeId) return null;
+  return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+};
+
+// Verified working YouTube IDs - only include ones we're 100% sure about
+const workingYouTubeIds = {
+  'Aaron Tveit': '61EL69OZSlY',  // Run Away With Me - verified
+  'Jeremy Jordan': 'jVwtGU3KOro',  // Run Away With Me - verified
+  'Rachel Zegler': 'Z9ZMLjLqAgE',  // Anyway - verified
+  'Lindsay Mendez': 'Gt76Mf6yAEo',  // Hand in Hand - verified (can map to multiple)
+  'Sarah Hyland & Melissa Benoist': 'MNKpuVxVxng',  // Freedom - verified
+  'Emma Hunton & Krystina Alabado': 'DVUyVjon7r8',  // Go Tonight Animatic - verified
+  'Michael Arden': '3or3GaYO884',  // Rise - verified
+  'Keala Settle': 'KcDMrmilTdE',  // Holding On - verified
+  'Uzo Aduba': '4WKLe1uZ5cc',  // I'll Still Be - verified
+  'Colleen Ballinger': 'Xv5TLhfdCB4',  // My Party Dress - verified
+  'Sutton Foster': 'upTSHDYlJk0',  // Performance - verified
+  'Michael Arden & Andy Mientus': 'r9P-bNRZfew',  // Vegas - verified
+  'Colton Haynes': 'cp6XzrVeq3c',  // Run Away With Me - verified
+  'Laura Osnes': 'ETupK7XBqsY',  // The Girl Who Drove Away - verified
+  'Meghann Fahy': '6LhEZccYPy4',  // Say the Word - verified
+  'Katie Thompson': 'u-E2p_-8uDI',  // Miles to Go - verified
+  'Matt Doyle': 'NCZkYGv-d-U',  // Last Week's Alcohol - verified
+};
+
+// Build data with collage rules (mirrors media-3)
+const performanceDataRaw = youtubePerformances
+  .filter((p) => p.priority <= 2)
+  // Remove Matt Doyle per request
+  .filter((p) => !(p.performer || '').includes('Matt Doyle'))
+  .map((p) => {
+    const celebrityImage = getCelebrityImage(p.performer, p.title);
+    const lindsayAvalanche = (p.title === 'Avalanche') && (p.performer || '') === 'Lindsay Mendez';
+    const imageUrl = lindsayAvalanche
+      ? '/images/media/lindsay-mendez-headshot.jpg'
+      : (celebrityImage || getYouTubeThumbnail(p.youtubeId));
+    // Preserve Avalanche YouTube ID specifically; otherwise allow performer-level overrides
+    let youtubeId = p.youtubeId;
+    const allowOverride = !(lindsayAvalanche);
+    if (allowOverride) {
+      for (const [performer, id] of Object.entries(workingYouTubeIds)) {
+        if (p.performer.includes(performer)) { youtubeId = id; break; }
+      }
+    } else {
+      youtubeId = 'zXMnhdybkMY';
+    }
+    const youtubeUrl = youtubeId
+      ? `https://www.youtube.com/watch?v=${youtubeId}`
+      : `https://www.youtube.com/results?search_query=${encodeURIComponent(p.searchQuery || `${p.performer} ${p.title} Kerrigan Lowdermilk`)}`;
+    return { ...p, imageUrl, youtubeUrl, youtubeId };
+  })
+  .filter((p) => p.imageUrl && p.imageUrl !== 'null');
+
+// Curate the first rows explicitly by order and span variant
+const byId = Object.fromEntries(performanceDataRaw.map((i) => [i.id, i]));
+const curated = [];
+if (byId['run-away-aaron-tveit']) curated.push({ ...byId['run-away-aaron-tveit'], __variant: 'square' });
+if (byId['anyway-rachel-zegler']) curated.push({ ...byId['anyway-rachel-zegler'], __variant: 'square' });
+if (byId['run-away-jeremy-jordan']) curated.push({ ...byId['run-away-jeremy-jordan'], __variant: 'big' });
+if (byId['go-tonight-animatic']) curated.push({ ...byId['go-tonight-animatic'], __variant: 'wide' });
+if (byId['say-the-word-meghann']) curated.push({ ...byId['say-the-word-meghann'], __variant: 'big' });
+
+const curatedIds = new Set(curated.map((i) => i.id));
+const katieItem = performanceDataRaw.find((i) => (i.performer || '').includes('Katie Thompson'));
+const lindsayAvalancheItem = performanceDataRaw.find((i) => i.id === 'avalanche-lindsay');
+
+const excludeLater = new Set([katieItem?.id, lindsayAvalancheItem?.id].filter(Boolean));
+let rest = performanceDataRaw.filter((i) => !curatedIds.has(i.id) && !excludeLater.has(i.id));
+
+// Promote key items to help fill gaps
+const priorityNames = ['Sutton Foster', 'Colleen Ballinger', 'Matt Doyle'];
+rest = rest.sort((a, b) => {
+  const w = (x) => (priorityNames.some((n) => (x.performer || '').includes(n)) ? 0 : 1);
+  return w(a) - w(b);
+});
+
+// Insert Katie Thompson immediately after Keala Settle
+const kealaIndex = rest.findIndex((i) => i.id === 'holding-on-keala');
+if (katieItem && kealaIndex !== -1) {
+  rest.splice(kealaIndex + 1, 0, { ...katieItem, __variant: 'tall' });
+}
+
+// Ensure one Lindsay Avalanche as a square in the flow
+if (lindsayAvalancheItem) rest.push({ ...lindsayAvalancheItem, __variant: 'square' });
+
+const performanceData = [...curated, ...rest];
+---
+
+<Layout metadata={metadata}>
+  <!-- GLightbox CSS/JS (CDN) and page-scoped init for video links -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js" defer></script>
+  <script is:inline>
+    const setupMediaLightbox = () => {
+      if (!window.GLightbox) { setTimeout(setupMediaLightbox, 60); return; }
+      if (window.__mediaLightbox) { try { window.__mediaLightbox.destroy(); } catch {} }
+      window.__mediaLightbox = window.GLightbox({
+        selector: 'a.glightbox',
+        loop: true,
+        touchNavigation: true,
+        closeOnOutsideClick: true,
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        slideEffect: 'slide',
+        autoplayVideos: false,
+      });
+      try { console.log(`[media] GLightbox bound: `, document.querySelectorAll('a.glightbox').length); } catch {}
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupMediaLightbox);
+    } else {
+      setupMediaLightbox();
+    }
+    document.addEventListener('astro:page-load', setupMediaLightbox);
+  </script>
+  
+  <!-- Header Section - Matching About/Contact style -->
+  <section class="px-4 py-16 mx-auto max-w-6xl lg:px-8 lg:py-20">
+    <h1 class="bree-h1-small mb-8 text-center">Media</h1>
+    
+    <!-- Collage grid: 4 columns, dense packing, varied sizes -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-0 collage-grid">
+      {performanceData.slice(0, 48).map((item) => {
+        const getLayout = (item) => {
+          let variant = item.__variant || 'square';
+          const title = (item.title || '').toLowerCase();
+          const perf = (item.performer || '');
+          if (!item.__variant) {
+            if (title.includes('go tonight') || item.title === 'Freedom') variant = 'wide';
+            if (perf.includes('Uzo Aduba') || perf.includes('Katie Thompson')) variant = 'tall';
+          }
+          if (variant === 'wide') return { span: 'col-span-2 row-span-1', aspect: 'aspect-[2/1]' };
+          if (variant === 'tall') return { span: 'col-span-1 row-span-2', aspect: 'aspect-[1/2]' };
+          if (variant === 'big') return { span: 'col-span-2 row-span-2', aspect: 'aspect-square' };
+          return { span: 'col-span-1 row-span-1', aspect: 'aspect-square' };
+        };
+        const { span, aspect } = getLayout(item);
+        return (
+          <div class={`group relative overflow-hidden ${span}`}>
+            <a
+              href={item.youtubeUrl}
+              class={`glightbox block relative overflow-hidden ${aspect}`}
+              data-gallery="performances"
+              data-title={item.title}
+              data-description={`Performed by ${item.performer}`}
+              data-type={item.youtubeId ? "video" : "external"}
+              target={item.youtubeId ? "_self" : "_blank"}
+              rel={item.youtubeId ? "" : "noopener noreferrer"}
+            >
+              <img 
+                src={item.imageUrl}
+                alt={`${item.performer} - ${item.title}`}
+                class={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+                  (item.performer || '').includes('Meghann Fahy') ? 'object-top' : 'object-center'
+                }`}
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex items-center justify-center">
+                <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-center px-3">
+                  <h3 class={`${
+                    (item.performer || '').length > 24
+                      ? 'text-xl sm:text-2xl md:text-3xl'
+                      : 'text-2xl sm:text-3xl md:text-4xl'
+                  } drop-shadow-lg font-extrabold uppercase tracking-tight leading-tight`}>
+                    {item.performer}
+                  </h3>
+                  <p class="mt-2 drop-shadow-lg font-medium leading-snug text-sm sm:text-base md:text-lg opacity-95">
+                    &ldquo;{item.title}&rdquo;
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- Spotify Albums Section -->
+    <div class="mt-16">
+      <h2 class="bree-h1-small mb-8 text-center">Albums</h2>
+      <div class="space-y-8">
+        {spotifyAlbums.map((album) => (
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold mb-4">{album.title} ({album.year})</h3>
+            <iframe
+              src={`https://open.spotify.com/embed/album/${album.spotifyId}?utm_source=generator`}
+              width="100%"
+              height="450"
+              frameBorder="0"
+              allowfullscreen=""
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              class="rounded-lg"
+            ></iframe>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+/* Text Shadow for better readability */
+.drop-shadow-lg { text-shadow: 0 2px 4px rgba(0,0,0,.9), 0 1px 2px rgba(0,0,0,.8); }
+.collage-grid { grid-auto-flow: dense; }
+
+/* Line clamp utility */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+</style>

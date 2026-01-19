@@ -1,0 +1,223 @@
+---
+import type { FeaturedItem } from '~/data/media/featured';
+
+export interface Props {
+  items: FeaturedItem[];
+  title?: string;
+  description?: string;
+}
+
+const { 
+  items = [], 
+  title = "Stream Everywhere", 
+  description = "Find our music on all your favorite platforms" 
+} = Astro.props as Props;
+
+// Platform configurations with icons and colors
+const platformConfig = {
+  spotify: {
+    name: 'Spotify',
+    color: 'bg-green-600 hover:bg-green-700',
+    icon: 'M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z'
+  },
+  apple: {
+    name: 'Apple Music',
+    color: 'bg-gray-900 hover:bg-black',
+    icon: 'M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z'
+  },
+  soundcloud: {
+    name: 'SoundCloud',
+    color: 'bg-orange-500 hover:bg-orange-600',
+    icon: 'M1.175 12.225c-.051 0-.094.046-.101.1l-.233 2.154.233 2.105c.007.058.05.098.101.098.05 0 .09-.04.099-.098l.255-2.105-.255-2.154c-.009-.057-.049-.1-.099-.1zm1.49.265c-.058 0-.106.053-.113.115l-.193 1.889.193 1.848c.007.06.055.113.113.113.055 0 .1-.052.108-.113l.221-1.848-.221-1.889c-.008-.062-.053-.115-.108-.115zm1.455.186c-.064 0-.118.058-.126.125l-.172 1.703.172 1.659c.008.066.062.123.126.123.061 0 .114-.057.123-.123l.193-1.659-.193-1.703c-.009-.067-.062-.125-.123-.125zm1.38.177c-.068 0-.124.063-.133.134l-.15 1.526.15 1.485c.009.069.065.132.133.132.066 0 .12-.063.129-.132l.17-1.485-.17-1.526c-.009-.071-.063-.134-.129-.134zm1.337.203c-.072 0-.133.068-.141.143l-.129 1.323.129 1.289c.008.074.069.141.141.141.07 0 .131-.067.14-.141l.148-1.289-.148-1.323c-.009-.075-.07-.143-.14-.143zm1.308.217c-.076 0-.14.073-.148.15l-.108 1.106.108 1.078c.008.077.072.148.148.148.074 0 .137-.071.146-.148l.125-1.078-.125-1.106c-.009-.077-.072-.15-.146-.15zm1.286.234c-.08 0-.147.078-.155.158l-.085.888.085.866c.008.08.075.156.155.156.078 0 .145-.076.154-.156l.104-.866-.104-.888c-.009-.08-.076-.158-.154-.158zm1.266.26c-.083 0-.152.083-.161.169l-.065.669.065.652c.009.085.078.167.161.167.082 0 .151-.082.16-.167l.083-.652-.083-.669c-.009-.086-.078-.169-.16-.169zm1.247.286c-.087 0-.158.089-.166.18l-.044.45.044.438c.008.09.079.178.166.178.085 0 .156-.088.164-.178l.062-.438-.062-.45c-.008-.091-.079-.18-.164-.18zm1.221.31c-.091 0-.164.094-.173.189l-.023.231.023.225c.009.094.082.187.173.187.089 0 .162-.093.171-.187l.041-.225-.041-.231c-.009-.095-.082-.189-.171-.189zm1.2.342c-.094 0-.169.101-.178.203v.012l.178.173-.178-.185v.012c.009.101.084.201.178.201.093 0 .168-.1.177-.201v-.012l-.177.185.177-.173v-.012c-.009-.102-.084-.203-.177-.203zm1.179.38c-.098 0-.175.108-.184.218v.018l.184.16-.184-.178v.018c.009.109.086.216.184.216.097 0 .173-.107.182-.216v-.018l-.182.178.182-.16v-.018c-.009-.11-.085-.218-.182-.218zm1.157.424c-.102 0-.18.115-.189.23v.024l.189.147-.189-.171v.024c.009.114.087.228.189.228.101 0 .178-.114.187-.228v-.024l-.187.171.187-.147v-.024c-.009-.115-.086-.23-.187-.23zm1.135.472c-.105 0-.185.122-.194.245v.031l.194.133-.194-.164v.031c.009.122.089.243.194.243.104 0 .183-.121.192-.243v-.031l-.192.164.192-.133v-.031c-.009-.123-.088-.245-.192-.245zm1.112.524c-.109 0-.191.129-.2.259v.037l.2.119-.2-.156v.037c.009.129.091.257.2.257.108 0 .189-.128.198-.257v-.037l-.198.156.198-.119v-.037c-.009-.13-.09-.259-.198-.259zm1.09.581c-.112 0-.196.136-.205.274v.044l.205.104-.205-.148v.044c.009.137.093.272.205.272.111 0 .194-.135.203-.272v-.044l-.203.148.203-.104v-.044c-.009-.138-.092-.274-.203-.274zm1.067.644c-.115 0-.201.144-.21.29v.052l.21.089-.21-.141v.052c.009.145.095.288.21.288.114 0 .199-.143.208-.288v-.052l-.208.141.208-.089v-.052c-.009-.146-.094-.29-.208-.29zm1.044.712c-.118 0-.206.151-.215.304v.06l.215.074-.215-.134v.06c.009.152.097.302.215.302.117 0 .204-.15.213-.302v-.06l-.213.134.213-.074v-.06c-.009-.153-.096-.304-.213-.304zm1.021.786c-.121 0-.211.158-.22.318v.067l.22.059-.22-.126v.067c.009.159.099.316.22.316.12 0 .209-.157.218-.316v-.067l-.218.126.218-.059v-.067c-.009-.16-.098-.318-.218-.318zm.998.866c-.124 0-.216.165-.225.331v.075l.225.043-.225-.118v.075c.009.165.101.329.225.329.123 0 .214-.164.223-.329v-.075l-.223.118.223-.043v-.075c-.009-.166-.1-.331-.223-.331zm.975.952c-.127 0-.221.172-.23.344v.083l.23.027-.23-.11v.083c.009.171.103.342.23.342.126 0 .219-.171.228-.342v-.083l-.228.11.228-.027v-.083c-.009-.172-.102-.344-.228-.344zm.952 1.044c-.13 0-.226.179-.235.357v.092l.235.011-.235-.103v.092c.009.177.105.355.235.355.129 0 .224-.178.233-.355v-.092l-.233.103.233-.011v-.092c-.009-.178-.104-.357-.233-.357zm.928 1.146c-.133 0-.231.186-.24.371v.101l.24-.005-.24-.096v.101c.009.184.107.369.24.369.132 0 .229-.185.238-.369v-.101l-.238.096.238.005v-.101c-.009-.185-.106-.371-.238-.371z'
+  },
+  youtube: {
+    name: 'YouTube',
+    color: 'bg-red-600 hover:bg-red-700',
+    icon: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'
+  }
+};
+---
+
+<section class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {items.map((item, index) => (
+      <div class="group relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-200 dark:border-gray-700">
+        <!-- Cover Art -->
+        <div class="relative h-48 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
+          <img
+            src={`https://img.youtube.com/vi/${item.youtubeId}/maxresdefault.jpg`}
+            alt={`${item.title} cover art`}
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
+          />
+          
+          <!-- Gradient Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          
+          <!-- Song Info Overlay -->
+          <div class="absolute bottom-3 left-3 right-3 text-white">
+            <h3 class="font-bold text-base mb-1 line-clamp-2">
+              {item.title}
+            </h3>
+            {item.artist && (
+              <p class="text-xs opacity-90">
+                {item.artist}
+              </p>
+            )}
+          </div>
+
+          <!-- Platform Icons Overlay - Hidden by default, shown on hover -->
+          <div class="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div class="text-center">
+              <p class="text-white font-medium mb-4">Available on:</p>
+              <div class="flex flex-wrap gap-3 justify-center">
+                {item.streamingLinks && Object.entries(item.streamingLinks).map(([platform, url]) => 
+                  url && platformConfig[platform as keyof typeof platformConfig] && (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class={`${platformConfig[platform as keyof typeof platformConfig].color} w-12 h-12 rounded-full flex items-center justify-center transform hover:scale-110 transition-transform duration-200 shadow-lg`}
+                      aria-label={`Listen on ${platformConfig[platform as keyof typeof platformConfig].name}`}
+                    >
+                      <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d={platformConfig[platform as keyof typeof platformConfig].icon}></path>
+                      </svg>
+                    </a>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Content -->
+        <div class="p-4">
+          {item.notes && (
+            <p class="text-gray-600 dark:text-gray-300 text-xs mb-3 line-clamp-2">
+              {item.notes}
+            </p>
+          )}
+
+          <!-- Streaming Platforms List -->
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold text-gray-900 dark:text-white mb-2">
+              Stream on:
+            </h4>
+            <div class="grid grid-cols-2 gap-2">
+              {item.streamingLinks && Object.entries(item.streamingLinks).map(([platform, url]) => 
+                url && platformConfig[platform as keyof typeof platformConfig] && (
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class={`${platformConfig[platform as keyof typeof platformConfig].color} text-white px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-200 flex items-center justify-center space-x-2 shadow-md hover:shadow-lg`}
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d={platformConfig[platform as keyof typeof platformConfig].icon}></path>
+                    </svg>
+                    <span>{platformConfig[platform as keyof typeof platformConfig].name}</span>
+                  </a>
+                )
+              )}
+            </div>
+          </div>
+
+          <!-- Category Badge -->
+          <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+            <span class={`inline-block px-3 py-1 text-xs font-medium rounded-full ${
+              item.category === 'flagship' ? 'bg-gold-100 text-gold-800 dark:bg-gold-900 dark:text-gold-200' :
+              item.category === 'official' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+              item.category === 'live' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+              'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+            }`}>
+              {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+            </span>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {items.length === 0 && (
+    <div class="text-center py-12">
+      <div class="w-16 h-16 mx-auto mb-4 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+        </svg>
+      </div>
+      <p class="text-gray-500 dark:text-gray-400">No streaming links available</p>
+    </div>
+  )}
+</section>
+
+<style>
+  /* Text line clamping */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Custom gold colors for flagship category */
+  .bg-gold-100 { background-color: #fef3c7; }
+  .text-gold-800 { color: #92400e; }
+  .dark .bg-gold-900 { background-color: #451a03; }
+  .dark .text-gold-200 { color: #fde68a; }
+
+  /* Responsive grid adjustments */
+  @media (max-width: 640px) {
+    .grid-cols-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Focus styles for accessibility */
+  a:focus-visible {
+    outline: 2px solid #3B82F6;
+    outline-offset: 2px;
+  }
+
+  /* Smooth animations */
+  .group:hover .group-hover\:scale-110 {
+    transform: scale(1.1);
+  }
+  
+  .group:hover .group-hover\:scale-105 {
+    transform: scale(1.05);
+  }
+</style>
+
+<script>
+  // Add staggered animation on scroll
+  const observeStreamingCards = () => {
+    const cards = document.querySelectorAll('.group');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }, index * 100);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '50px'
+    });
+
+    cards.forEach((card, index) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(card);
+    });
+  };
+
+  // Initialize animations when DOM is loaded
+  document.addEventListener('DOMContentLoaded', observeStreamingCards);
+</script>

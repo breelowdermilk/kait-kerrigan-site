@@ -1,0 +1,61 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Image from '~/components/common/Image.astro';
+
+const metadata = {
+  title: 'About',
+  description: 'Kait Kerrigan is an award-winning bookwriter, lyricist and playwright. Broadway: The Great Gatsby. West End: The Great Gatsby, The Time Traveller\'s Wife. Awards: Kleban, Jonathan Larson, Theatre Hall of Fame.',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 mx-auto max-w-6xl lg:px-8 lg:py-20">
+    <div class="grid md:grid-cols-2 gap-12 items-start">
+      <!-- Photo Column -->
+      <div class="md:sticky md:top-20">
+        <Image
+          src="~/assets/images/kait-hero.jpg"
+          alt="Kait Kerrigan"
+          width={500}
+          height={600}
+          class="w-full max-w-md mx-auto rounded-lg shadow-lg"
+        />
+      </div>
+
+      <!-- Bio Text Column -->
+      <div class="prose prose-lg max-w-none">
+        <h1 class="bree-h1-small mb-8">Kait Kerrigan</h1>
+
+        <div class="space-y-6">
+          <p>
+            <strong>KAIT KERRIGAN</strong> is an award-winning bookwriter, lyricist, and playwright. Broadway: <em>The Great Gatsby</em> (book). West End: <em>The Great Gatsby</em>, <em>The Time Traveller's Wife</em>. Off-Broadway: <em>The Mad Ones</em>, <em>Henry and Mudge</em>.
+          </p>
+
+          <p>
+            <strong>2025:</strong> <em>The Heart</em> (La Jolla Playhouse), <em>The Great Gatsby</em> (Seoul), <em>The Mad Ones</em> (London), <em>Indigo</em> (UK Tour).
+          </p>
+
+          <p>
+            Regional: <em>Justice</em>, <em>Earthrise</em>, <em>Father/Daughter</em>, <em>Imaginary Love</em>, <em>Disaster Relief</em>. Digital: <em>A Killer Party</em>.
+          </p>
+
+          <p>
+            <strong>Awards:</strong> Kleban Award (libretto), Jonathan Larson Award (lyric-writing), Most Promising Lyricist (Theatre Hall of Fame), Edgerton Award (<em>Father/Daughter</em>).
+          </p>
+
+          <p>
+            Albums: <em>The Great Gatsby</em> (Original Broadway Cast), <em>The Mad Ones</em> (30+ million streams), <em>Kerrigan-Lowdermilk Live</em>, <em>Our First Mistake</em>.
+          </p>
+
+          <p>
+            Songs "Run Away with Me" and "Go Tonight" have become viral sensations with thousands of fan performance videos online.
+          </p>
+
+          <p class="text-lg font-medium">
+            <a href="https://twitter.com/kaitkerrigan" target="_blank" rel="noopener noreferrer" class="bree-link">@kaitkerrigan</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

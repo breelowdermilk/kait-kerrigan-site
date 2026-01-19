@@ -1,0 +1,154 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import MediaTileOverlay from '~/components/media/MediaTileOverlay.astro';
+import defaultImg from '~/assets/images/default.jpg';
+
+const shows = await getCollection('shows');
+
+const showOrder = [
+  'ernxst',
+  'justice',
+  'the-mad-ones',
+  'ada-twist-scientist',
+  'republic',
+  'kill-the-boy-band',
+  'tales-from-the-bad-years',
+];
+
+const sortedShows = shows
+  .filter((s) => showOrder.includes(s.slug))
+  .sort((a, b) => showOrder.indexOf(a.slug) - showOrder.indexOf(b.slug));
+
+const showsWithContent = await Promise.all(
+  sortedShows.map(async (show) => {
+    const { Content } = await show.render();
+    return { ...show, Content };
+  })
+);
+
+const metadata = {
+  title: 'Shows (Alt Compact) - Bree Lowdermilk',
+  description: 'Alternate compact inline modal layout with small thumbnail',
+  openGraph: { type: 'website' },
+};
+---
+
+<PageLayout {metadata}>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js" defer></script>
+  <script is:inline>
+    const setupShowsLightbox = () => {
+      if (!window.GLightbox) { setTimeout(setupShowsLightbox, 60); return; }
+      if (window.__showsLightbox) { try { window.__showsLightbox.destroy(); } catch {} }
+      window.__showsLightbox = window.GLightbox({
+        selector: 'a.glightbox[data-type="inline"]',
+        loop: false,
+        touchNavigation: true,
+        closeOnOutsideClick: true,
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        slideEffect: 'slide',
+      });
+      const overlayEl = () => document.querySelector('.goverlay');
+      const setDim = () => { const o = overlayEl(); if (o) o.style.background = 'rgba(31,41,55,0.66)'; };
+      window.__showsLightbox.on('open', setDim);
+      window.__showsLightbox.on('slide_changed', setDim);
+      window.__showsLightbox.on('close', () => { const o = overlayEl(); if (o) o.style.background = ''; });
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupShowsLightbox); else setupShowsLightbox();
+    document.addEventListener('astro:page-load', setupShowsLightbox);
+  </script>
+
+  <section class="px-6 sm:px-6 max-w-7xl mx-auto">
+    <div class="py-12 md:py-16 lg:py-20 mx-auto">
+      <header class="max-w-3xl mx-auto text-center mb-12">
+        <h1 class="bree-h1-small mb-4">Shows — Alt Compact</h1>
+      </header>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+        {showsWithContent.map((show) => {
+          const imageUrl = show.data.heroImage || defaultImg;
+          const shortBlurb = show.data.synopsis
+            ? (() => { const w = show.data.synopsis.trim().split(/\s+/); const s = w.slice(0,9).join(' '); return s + (w.length>9 ? '…' : ''); })()
+            : '';
+
+          return (
+            <MediaTileOverlay
+              title={show.data.title}
+              subtitle={show.data.status || show.data.year}
+              category={show.data.venue || ''}
+              className="aspect-[7/8] show-tile"
+              credits={show.data.credits}
+              shortBlurb={shortBlurb}
+            >
+              <a
+                href={`#show-${show.slug}`}
+                class="glightbox block w-full h-full relative"
+                data-gallery="shows-compact"
+                data-title={show.data.title}
+                data-type="inline"
+                data-width="560"
+                data-height="720"
+              >
+                <img src={imageUrl} alt={show.data.title || 'Show poster'} class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+              </a>
+            </MediaTileOverlay>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  {showsWithContent.map((show) => {
+    const imageUrl = show.data.heroImage || defaultImg;
+    return (
+      <div id={`show-${show.slug}`} class="show-modal-content" style="display: none;" aria-hidden="true">
+        <div class="modal-inner">
+          <div class="modal-image-container"><img src={imageUrl} alt={show.data.title || 'Show image'} class="modal-hero-image" /></div>
+          <div class="modal-content-body">
+            <h2 class="modal-title">{show.data.title || 'Untitled Show'}</h2>
+            {Array.isArray(show.data.credits) && show.data.credits.find(c=>c.toLowerCase().startsWith('based on')) && (
+              <p class="modal-based-on">{show.data.credits.find(c=>c.toLowerCase().startsWith('based on'))}</p>
+            )}
+            {show.data.synopsis && (
+              <div class="modal-section"><p class="modal-synopsis">{show.data.synopsis}</p></div>
+            )}
+            {show.Content && (
+              <div class="modal-section modal-markdown-content prose prose-lg max-w-none"><show.Content /></div>
+            )}
+            {show.data.credits && show.data.credits.length > 0 && (
+              <div class="modal-section">
+                <div class="modal-credits-inline">
+                  {show.data.credits.filter(c=>!c.toLowerCase().startsWith('based on')).map((credit) => (
+                    <p class="credit-line">{credit}</p>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</PageLayout>
+
+<style>
+  :global(.gslide-inline) { max-width: min(40vw, 760px); }
+  @media (max-width: 768px) { :global(.gslide-inline) { max-width: 92vw; } }
+  :global(.goverlay) { transition: background 0.3s ease; }
+  :global(.gslide-inline .modal-image-container) { max-height: 220px; overflow: hidden; }
+
+  .modal-inner { background: #ffffff; border-radius: 12px; overflow: hidden; position: relative; }
+  .modal-content-body { padding: 1.75rem; }
+  .modal-title { font-size: 2.1rem; font-family: var(--font-title); font-weight: 300; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.75rem; color: #111827; line-height: 1.2; }
+  .modal-based-on { text-align: center; font-style: italic; color: #6b7280; font-size: 0.975rem; margin-top: -0.2rem; margin-bottom: 0.6rem; }
+  .modal-synopsis { font-size: 1.05rem; line-height: 1.7; color: #4b5563; font-style: italic; }
+  .modal-markdown-content { color:#4b5563; line-height:1.7; }
+  .modal-credits-inline { color:#4b5563; font-size:1.05rem; text-align: left; }
+  .modal-credits-inline .credit-line { margin: 0 0 0.25rem 0; }
+
+  /* Common: title formatting */
+  :global(.glightbox-container .modal-title) { text-transform: uppercase; text-align: center; }
+</style>
+

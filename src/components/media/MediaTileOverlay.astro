@@ -1,0 +1,80 @@
+---
+export interface Props {
+  title: string;
+  subtitle?: string;
+  year?: string;
+  category?: string;
+  className?: string;
+  credits?: string[];
+  shortBlurb?: string;
+}
+
+const { title, subtitle, year, category, className = '', credits, shortBlurb } = Astro.props;
+---
+
+<!-- Media tile with hover overlay (copied from media-nav variant) -->
+<div class={`media-tile-overlay group relative overflow-hidden rounded-lg cursor-pointer ${className}`}>
+  <slot />
+  
+  <!-- Dark overlay with text - appears on hover -->
+  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/70 transition-all duration-300 ease-in-out pointer-events-none">
+    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out pointer-events-none">
+      <div class="text-center px-4 py-2">
+        <h3 class={`text-white font-bold mb-3 leading-tight uppercase ${className?.includes('show-tile') ? 'text-4xl sm:text-5xl' : className?.includes('video-tile') ? 'text-xl sm:text-2xl' : 'text-lg'}`} style="text-shadow: 0 2px 8px rgba(0,0,0,0.9); font-family: var(--font-headers); letter-spacing: 0.06em;">
+          {(() => {
+            if (className?.includes('show-tile') && typeof title === 'string' && title.toUpperCase().includes('ERNXST')) {
+              const parts = title.split(', or ');
+              if (parts.length === 2) {
+                return (
+                  <>
+                    <span class="overlay-title-line1">{parts[0]}</span>
+                    <span class="overlay-title-line2">{"or "}{parts[1]}</span>
+                  </>
+                );
+              }
+            }
+            return title;
+          })()}
+        </h3>
+        
+        {!className?.includes('show-tile') && subtitle && (
+          <p class={`text-white opacity-95 mb-2 ${className?.includes('video-tile') ? 'text-base' : 'text-sm'}`} style="text-shadow: 0 1px 4px rgba(0,0,0,0.9);">
+            {subtitle}
+          </p>
+        )}
+        
+        {!(className?.includes('show-tile')) && (year || category) && (
+          <div class={`flex items-center justify-center space-x-2 text-white opacity-90 ${className?.includes('video-tile') ? 'text-sm' : 'text-xs'}`} style="text-shadow: 0 1px 3px rgba(0,0,0,0.9);">
+            {year && <span>{year}</span>}
+            {year && category && <span>•</span>}
+            {category && <span class="uppercase tracking-wide">{category}</span>}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Smooth transform on hover */
+.media-tile-overlay {
+  transition: transform 0.2s ease-in-out;
+}
+
+.media-tile-overlay:hover {
+  transform: translateY(-2px);
+}
+
+/* Ensure images scale properly */
+.media-tile-overlay img {
+  transition: transform 0.3s ease-in-out;
+}
+
+.media-tile-overlay:hover img {
+  transform: scale(1.05);
+}
+
+/* Special overlay title handling for ERNXST */
+.overlay-title-line1, .overlay-title-line2 { display: block; }
+.overlay-title-line2 { font-size: 0.7em; opacity: 0.95; }
+</style>

@@ -1,0 +1,188 @@
+{
+  "timestamp": "2025-09-03T08:50:03.061Z",
+  "url": "http://localhost:4323/media",
+  "screenshots": [
+    {
+      "viewport": "desktop",
+      "dimensions": "1920x1080",
+      "path": "test-screenshots/media-page-desktop.png"
+    },
+    {
+      "viewport": "tablet",
+      "dimensions": "768x1024",
+      "path": "test-screenshots/media-page-tablet.png"
+    },
+    {
+      "viewport": "mobile",
+      "dimensions": "375x667",
+      "path": "test-screenshots/media-page-mobile.png"
+    }
+  ],
+  "errors": [
+    {
+      "type": "console-error",
+      "message": "Error: <path> attribute d: Expected number, \"…082.16-.167l.083--.652-.083-.669…\".",
+      "timestamp": "2025-09-03T08:50:03.494Z"
+    },
+    {
+      "type": "network-error",
+      "url": "https://img.youtube.com/vi/rMJSiNN0DxU/maxresdefault.jpg",
+      "status": 404,
+      "statusText": "",
+      "timestamp": "2025-09-03T08:50:03.605Z"
+    },
+    {
+      "type": "console-error",
+      "message": "Failed to load resource: the server responded with a status of 404 ()",
+      "timestamp": "2025-09-03T08:50:03.605Z"
+    },
+    {
+      "type": "network-error",
+      "url": "https://img.youtube.com/vi/Gt76Mf6yAEo/maxresdefault.jpg",
+      "status": 404,
+      "statusText": "",
+      "timestamp": "2025-09-03T08:50:03.618Z"
+    },
+    {
+      "type": "console-error",
+      "message": "Failed to load resource: the server responded with a status of 404 ()",
+      "timestamp": "2025-09-03T08:50:03.618Z"
+    },
+    {
+      "type": "network-error",
+      "url": "https://img.youtube.com/vi/jVwtGU3KOro/maxresdefault.jpg",
+      "status": 404,
+      "statusText": "",
+      "timestamp": "2025-09-03T08:50:03.618Z"
+    },
+    {
+      "type": "console-error",
+      "message": "Failed to load resource: the server responded with a status of 404 ()",
+      "timestamp": "2025-09-03T08:50:03.619Z"
+    }
+  ],
+  "warnings": [
+    {
+      "type": "console-warning",
+      "message": "Allow attribute will take precedence over 'allowfullscreen'.",
+      "timestamp": "2025-09-03T08:50:03.493Z"
+    }
+  ],
+  "elements": {
+    "Hero Carousel": {
+      "selector": ".hero-carousel",
+      "exists": true,
+      "visible": true,
+      "count": 1
+    },
+    "Featured Releases": {
+      "selector": ".featured-releases",
+      "exists": false,
+      "visible": false,
+      "count": 0
+    },
+    "Video Gallery": {
+      "selector": ".video-gallery",
+      "exists": false,
+      "visible": false,
+      "count": 0
+    },
+    "Streaming Links": {
+      "selector": ".streaming-links",
+      "exists": true,
+      "visible": true,
+      "count": 4
+    },
+    "Navigation": {
+      "selector": "nav",
+      "exists": true,
+      "visible": true,
+      "count": 1
+    },
+    "Footer": {
+      "selector": "footer",
+      "exists": true,
+      "visible": false,
+      "count": 1
+    },
+    "Carousel Container": {
+      "selector": "[data-carousel]",
+      "exists": false,
+      "visible": false,
+      "count": 0
+    },
+    "Carousel Slides": {
+      "selector": ".carousel-slide",
+      "exists": true,
+      "visible": true,
+      "count": 4
+    },
+    "Video Items": {
+      "selector": ".video-item",
+      "exists": false,
+      "visible": false,
+      "count": 0
+    },
+    "Streaming Platforms": {
+      "selector": ".streaming-platform",
+      "exists": false,
+      "visible": false,
+      "count": 0
+    },
+    "Carousel Controls": {
+      "nextButton": false,
+      "prevButton": false,
+      "dotsCount": 0
+    },
+    "Carousel Size": {
+      "width": 1200,
+      "height": 462.796875,
+      "x": 0,
+      "y": 77
+    }
+  },
+  "performance": {
+    "JSEventListeners": 247,
+    "Nodes": 5089,
+    "JSHeapUsedSize": "5.07 MB",
+    "JSHeapTotalSize": "7.45 MB"
+  },
+  "responsive": {
+    "desktop": {
+      "mobileMenuVisible": false,
+      "navigationVisible": true,
+      "viewportWidth": 1920,
+      "viewportHeight": 1080,
+      "carouselSize": {
+        "width": 1600,
+        "height": 500
+      }
+    },
+    "tablet": {
+      "mobileMenuVisible": false,
+      "navigationVisible": true,
+      "viewportWidth": 768,
+      "viewportHeight": 1024,
+      "carouselSize": {
+        "width": 768,
+        "height": 500
+      }
+    },
+    "mobile": {
+      "mobileMenuVisible": false,
+      "navigationVisible": false,
+      "viewportWidth": 375,
+      "viewportHeight": 667,
+      "carouselSize": {
+        "width": 375,
+        "height": 333.5
+      }
+    }
+  },
+  "accessibility": {
+    "hasH1": true,
+    "allImagesHaveAlt": true,
+    "hasSkipLink": false,
+    "focusableElementsCount": 0
+  }
+}

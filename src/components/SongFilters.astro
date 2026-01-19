@@ -1,0 +1,65 @@
+---
+export interface Props {
+  voiceTypes: string[];
+  moods: string[];
+  shows: string[];
+}
+const { voiceTypes, moods, shows } = Astro.props;
+---
+
+<div class="filters" client:load>
+  <label>
+    Search
+    <input id="search" type="search" placeholder="Search songs by title or lyric…" />
+  </label>
+
+  <fieldset>
+    <legend>Voice Type</legend>
+    {
+      voiceTypes.map((v) => (
+        <label>
+          <input type="checkbox" name="voice" value={v} /> {v}
+        </label>
+      ))
+    }
+  </fieldset>
+
+  <fieldset>
+    <legend>Mood</legend>
+    {
+      moods.map((m) => (
+        <label>
+          <input type="checkbox" name="mood" value={m} /> {m}
+        </label>
+      ))
+    }
+  </fieldset>
+
+  <label>
+    Show
+    <select name="show">
+      <option value="">All</option>
+      {shows.map((s) => <option value={s}>{s}</option>)}
+    </select>
+  </label>
+</div>
+
+<style>
+  .filters {
+    display: grid;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  fieldset {
+    border: 0;
+    padding: 0;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  label {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+</style>

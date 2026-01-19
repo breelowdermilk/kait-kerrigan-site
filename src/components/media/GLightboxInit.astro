@@ -1,0 +1,354 @@
+---
+// GLightbox initialization component
+// This component sets up GLightbox for the entire site with proper Astro integration
+const { profile = 'media', options = {} } = Astro.props;
+---
+
+<!-- GLightbox CSS + JS fallback -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js" defer></script>
+
+<script type="module" define:vars={{ profile, options }}>
+  // Component config injected from Astro props
+  const componentConfig = {
+    profile,
+    options
+  };
+
+  // Robust loader: try ESM, fallback to CDN global
+  const loadGL = async () => {
+    try {
+      const mod = await import('glightbox');
+      console.log('[glightbox] Loaded via ESM');
+      return mod.default;
+    } catch (err) {
+      console.warn('[glightbox] ESM import failed, waiting for CDN global…');
+      // Wait up to 2000ms for the deferred CDN script to attach window.GLightbox
+      const start = Date.now();
+      while (!window.GLightbox && Date.now() - start < 2000) {
+        await new Promise(r => setTimeout(r, 50));
+      }
+      if (window.GLightbox) {
+        console.log('[glightbox] Loaded via CDN global');
+        return window.GLightbox;
+      }
+      console.error('[glightbox] Not available after waiting for CDN');
+      return null;
+    }
+  };
+
+  class GLightboxManager {
+    constructor() {
+      this.lightbox = null;
+      this.GL = null;
+      // Defer initialization until DOM is ready to ensure inline anchors exist
+      this.setupViewTransitions();
+    }
+    
+    async initLightbox() {
+      // Destroy existing instance if it exists
+      if (this.lightbox) {
+        this.lightbox.destroy();
+      }
+      // Ensure library is available
+      if (!this.GL) {
+        this.GL = await loadGL();
+      }
+      if (!this.GL) return; // Gracefully bail if not available yet
+
+      // Base defaults shared across pages
+      const baseOptions = {
+        selector: 'a.glightbox',
+        touchNavigation: true,
+        autoplayVideos: false,
+        loop: true,
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        slideEffect: 'slide',
+        moreText: 'View more',
+        moreLength: 60,
+        cssEfects: {
+          fade: { in: 'fadeIn', out: 'fadeOut' },
+          slide: { in: 'slideInRight', out: 'slideOutLeft' }
+        },
+        plyr: {
+          css: 'https://cdn.plyr.io/3.6.8/plyr.css',
+          js: 'https://cdn.plyr.io/3.6.8/plyr.js',
+          config: {
+            ratio: '16:9',
+            youtube: {
+              noCookie: false,
+              rel: 0,
+              showinfo: 0,
+              iv_load_policy: 3,
+              modestbranding: 1
+            }
+          }
+        },
+        svg: {
+          close: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>',
+          next: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,18 15,12 9,6"></polyline></svg>',
+          prev: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15,18 9,12 15,6"></polyline></svg>'
+        }
+      };
+
+      // Profile-specific presets
+      const mediaPreset = {
+        // Media page: video gallery UX
+        loop: true,
+        autoplayVideos: false,
+      };
+
+      const showsPreset = {
+        // Shows page: inline modal UX
+        loop: false,
+        autoplayVideos: false,
+        closeOnOutsideClick: true
+      };
+
+      const preset = (componentConfig.profile === 'shows') ? showsPreset : mediaPreset;
+      const pageOverrides = componentConfig.options || {};
+
+      // Initialize GLightbox with merged settings
+      this.lightbox = this.GL({
+        ...baseOptions,
+        ...preset,
+        ...pageOverrides
+      });
+      
+      // Add event listeners for video events
+      this.lightbox.on('slide_before_load', (data) => {
+        console.log('GLightbox: Loading slide', data);
+      });
+      
+      this.lightbox.on('slide_after_load', (data) => {
+        console.log('GLightbox: Slide loaded', data);
+      });
+
+      // Debug: count anchors found
+      try {
+        const count = document.querySelectorAll('a.glightbox').length;
+        console.log(`[glightbox] Bound to ${count} anchors`);
+      } catch {}
+    }
+    
+    setupViewTransitions() {
+      // Handle Astro View Transitions
+      document.addEventListener('astro:before-swap', () => {
+        if (this.lightbox) {
+          this.lightbox.destroy();
+        }
+      });
+      
+      document.addEventListener('astro:after-swap', () => {
+        this.initLightbox();
+      });
+      // Also re-initialize on history navigation/popstate just in case
+      window.addEventListener('popstate', () => {
+        this.initLightbox();
+      });
+    }
+    
+    // Helper method to add custom gallery items programmatically
+    addGalleryItem(selector, options = {}) {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(element => {
+        // Add glightbox class if not present
+        if (!element.classList.contains('glightbox')) {
+          element.classList.add('glightbox');
+        }
+        
+        // Set data attributes for GLightbox
+        Object.entries(options).forEach(([key, value]) => {
+          element.setAttribute(`data-${key}`, value);
+        });
+      });
+      
+      // Reinitialize to pick up new elements
+      this.initLightbox();
+    }
+    
+    // Helper method to create YouTube lightbox links
+    createYouTubeLink(youtubeId, title, description = '') {
+      return {
+        href: `https://www.youtube.com/watch?v=${youtubeId}`,
+        type: 'video',
+        source: 'youtube',
+        width: 900,
+        height: 506,
+        title: title,
+        description: description
+      };
+    }
+    
+    // Helper method to create Spotify embed lightbox
+    createSpotifyLink(spotifyId, title, description = '') {
+      const embedUrl = `https://open.spotify.com/embed/album/${spotifyId}?utm_source=generator&theme=0`;
+      return {
+        href: embedUrl,
+        type: 'iframe',
+        width: 900,
+        height: 600,
+        title: title,
+        description: description
+      };
+    }
+  }
+  
+  // Initialize GLightbox manager
+  let glightboxManager;
+  
+  const initializeGLightbox = () => {
+    if (!glightboxManager) {
+      glightboxManager = new GLightboxManager();
+    }
+    glightboxManager.initLightbox();
+    // Make manager available globally for other components
+    window.glightboxManager = glightboxManager;
+  };
+  
+  // Initialize on different events to ensure it works with Astro
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeGLightbox);
+  } else {
+    initializeGLightbox();
+  }
+  
+  // Also initialize on page load as fallback
+  window.addEventListener('load', () => {
+    if (!window.glightboxManager) {
+      initializeGLightbox();
+    }
+  });
+  
+  // Handle Astro page transitions
+  document.addEventListener('astro:page-load', initializeGLightbox);
+
+  // Strong inline fallback: directly open via API if auto-binding fails
+  document.addEventListener('click', (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a.glightbox[data-type="inline"]') : null;
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+    // If library isn’t ready or auto-binding didn’t attach, open programmatically
+    if (!window.glightboxManager || !window.glightboxManager.lightbox) {
+      e.preventDefault();
+      initializeGLightbox();
+      setTimeout(() => {
+        if (window.glightboxManager && window.glightboxManager.lightbox) {
+          window.glightboxManager.lightbox.open({
+            href,
+            type: 'inline',
+            title: a.getAttribute('data-title') || undefined,
+          });
+        } else {
+          // final fallback: trigger original click
+          a.click();
+        }
+      }, 120);
+    }
+  }, { capture: true });
+</script>
+
+<style>
+  /* Custom GLightbox styling for music content */
+  :global(.glightbox-clean .gslide-description) {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+  
+  :global(.glightbox-clean .gslide-title) {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+  }
+  
+  :global(.glightbox-clean .gslide-desc) {
+    color: #e5e7eb;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  
+  /* Style for video thumbnails with play button */
+  :global(.glightbox-video-thumb) {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+  }
+  
+  :global(.glightbox-video-thumb:hover) {
+    transform: scale(1.02);
+  }
+  
+  :global(.glightbox-video-thumb::after) {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%);
+    transition: opacity 0.3s ease;
+  }
+  
+  :global(.glightbox-video-thumb:hover::after) {
+    opacity: 0.7;
+  }
+  
+  /* Custom play button overlay */
+  :global(.glightbox-play-btn) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4rem;
+    height: 4rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+  }
+  
+  :global(.glightbox-video-thumb:hover .glightbox-play-btn) {
+    background: rgba(255, 255, 255, 1);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  
+  :global(.glightbox-play-btn svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #1f2937;
+    margin-left: 2px; /* Slight offset for visual balance */
+  }
+</style>
+
+<style is:global>
+  /* Speed up GLightbox animations slightly */
+  .gfadeIn { animation-duration: 0.28s !important; }
+  .gfadeOut { animation-duration: 0.24s !important; }
+  .gzoomIn { animation-duration: 0.28s !important; }
+  .gzoomOut { animation-duration: 0.24s !important; }
+  .gslideInRight, .gslideInLeft { animation-duration: 0.25s !important; }
+  .gslideOutRight, .gslideOutLeft { animation-duration: 0.22s !important; }
+  /* Reduce slide transform transition slightly */
+  .glightbox-container .gslider { transition: transform 0.25s ease !important; }
+
+  /* Hardening: ensure overlay and content fill and center correctly */
+  .glightbox-container { position: fixed !important; inset: 0 !important; z-index: 2147483647 !important; }
+  .goverlay { position: fixed !important; top: -1px !important; left: 0 !important; right: 0 !important; bottom: 0 !important; }
+  .glightbox-container .gcontainer { height: 100% !important; }
+  .glightbox-container .gslider { height: 100% !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+  .glightbox-container .gslide { display: flex !important; align-items: center !important; justify-content: center !important; }
+  .glightbox-container .ginner-container { max-width: 100% !important; margin: 0 auto !important; }
+  .glightbox-container .gslide-video, .glightbox-container .gvideo-wrapper { max-width: 90vw !important; max-height: 80vh !important; }
+  .glightbox-container .gslide-media { display:flex !important; align-items:center !important; justify-content:center !important; max-width:90vw !important; max-height:80vh !important; }
+  .glightbox-container iframe, .glightbox-container video { max-width: 100% !important; max-height: 100% !important; width: 100% !important; height: 100% !important; }
+  .glightbox-container .gslide { padding: 0 !important; }
+</style>

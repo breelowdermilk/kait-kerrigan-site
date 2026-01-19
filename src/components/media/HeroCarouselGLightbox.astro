@@ -1,0 +1,423 @@
+---
+import type { FeaturedItem } from '~/data/media/featured';
+import MediaTooltip from './MediaTooltip.astro';
+
+export interface Props {
+  items: FeaturedItem[];
+  autoRotate?: boolean;
+  rotationInterval?: number;
+}
+
+const { 
+  items = [], 
+  autoRotate = true, 
+  rotationInterval = 8000 
+} = Astro.props;
+
+// Generate thumbnail URL from YouTube ID
+const getYouTubeThumbnail = (id: string, quality = 'maxresdefault') => 
+  `https://img.youtube.com/vi/${id}/${quality}.jpg`;
+
+// Get category badge styling
+const getCategoryBadge = (category: FeaturedItem['category']) => {
+  const badges = {
+    flagship: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+    live: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+    official: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+    collaboration: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+  };
+  return badges[category] || badges.official;
+};
+
+// Platform icons (using Unicode symbols for now)
+const platformIcons = {
+  spotify: '🎵',
+  apple: '🍎',
+  soundcloud: '☁️',
+  youtube: '📺'
+};
+
+// Format duration if available
+const formatDuration = (seconds?: number) => {
+  if (!seconds) return undefined;
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+---
+
+<div class="hero-carousel relative w-1/2 max-w-md mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden">
+  <!-- Main Carousel Container -->
+  <div class="carousel-container relative bg-black hero-sizing">
+    <!-- Slides -->
+    {items.map((item, index) => (
+      <div 
+        class={`carousel-slide absolute inset-0 transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}`}
+        data-index={index}
+      >
+        <!-- Video Thumbnail with GLightbox Integration -->
+        <div class="relative w-full h-full group">
+          <a 
+            href={`https://www.youtube.com/watch?v=${item.youtubeId}`}
+            class="glightbox glightbox-video-thumb block w-full h-full"
+            data-gallery="hero-carousel"
+            data-title={item.title}
+            data-description={`${item.artist ? `by ${item.artist} • ` : ''}${item.notes}`}
+            data-type="video"
+            data-source="youtube"
+          >
+            <img 
+              src={getYouTubeThumbnail(item.youtubeId)} 
+              alt={item.title}
+              class="w-full h-full object-cover"
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
+            
+            <!-- Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40"></div>
+            
+            <!-- GLightbox Play Button -->
+            <div class="glightbox-play-btn">
+              <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+            
+            <!-- Content Overlay -->
+            <div class="absolute inset-0 flex items-end p-4 sm:p-6 md:p-8">
+              <div class="text-white max-w-2xl">
+                <!-- Category Badge -->
+                <span class={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-3 ${getCategoryBadge(item.category)}`}>
+                  {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                </span>
+                
+                <!-- Title and Artist -->
+                <h2 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 leading-tight">
+                  {item.title}
+                </h2>
+                {item.artist && (
+                  <p class="text-base sm:text-lg md:text-xl text-gray-200 mb-3">
+                    {item.artist}
+                  </p>
+                )}
+                
+                <!-- Notes -->
+                <p class="text-sm md:text-base text-gray-300 mb-4 line-clamp-2">
+                  {item.notes}
+                </p>
+                
+                <!-- Streaming Links (Shown on Hover) -->
+                {item.streamingLinks && (
+                  <div class="streaming-links opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-3">
+                    {Object.entries(item.streamingLinks).map(([platform, url]) => (
+                      <a 
+                        href={url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full backdrop-blur-sm transition-colors duration-200"
+                        title={`Listen on ${platform.charAt(0).toUpperCase() + platform.slice(1)}`}
+                        onclick="event.stopPropagation()"
+                      >
+                        <span class="text-lg">
+                          {platformIcons[platform as keyof typeof platformIcons] || '🔗'}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <!-- Enhanced Hover Tooltip -->
+            <MediaTooltip 
+              title={item.title}
+              artist={item.artist}
+              description={item.notes}
+              category={item.category}
+              position="top"
+              className="hidden sm:block"
+            />
+          </a>
+        </div>
+      </div>
+    ))}
+  </div>
+  
+  <!-- Navigation Controls -->
+  <div class="absolute inset-y-0 left-0 flex items-center">
+    <button 
+      class="nav-btn prev-btn ml-4 w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200"
+      aria-label="Previous video"
+    >
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+  </div>
+  
+  <div class="absolute inset-y-0 right-0 flex items-center">
+    <button 
+      class="nav-btn next-btn mr-4 w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200"
+      aria-label="Next video"
+    >
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+  
+  <!-- Dots Navigation -->
+  <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+    {items.map((_, index) => (
+      <button 
+        class={`dot w-3 h-3 rounded-full transition-all duration-200 ${index === 0 ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'}`}
+        data-index={index}
+        aria-label={`Go to slide ${index + 1}`}
+      >
+      </button>
+    ))}
+  </div>
+  
+  <!-- Progress Bar -->
+  {autoRotate && (
+    <div class="progress-bar absolute bottom-0 left-0 h-1 bg-white/30 transition-all duration-100 ease-linear" style="width: 0%"></div>
+  )}
+</div>
+
+<script define:vars={{ items, autoRotate, rotationInterval }}>
+  class HeroCarouselGLightbox {
+    constructor() {
+      this.currentIndex = 0;
+      this.items = items;
+      this.autoRotate = autoRotate;
+      this.rotationInterval = rotationInterval;
+      this.intervalId = null;
+      this.progressInterval = null;
+      
+      this.slides = document.querySelectorAll('.carousel-slide');
+      this.dots = document.querySelectorAll('.dot');
+      this.prevBtn = document.querySelector('.prev-btn');
+      this.nextBtn = document.querySelector('.next-btn');
+      this.progressBar = document.querySelector('.progress-bar');
+      
+      this.init();
+      
+      // Mark as initialized
+      window.heroCarouselGLightboxInitialized = true;
+    }
+    
+    init() {
+      // Navigation event listeners
+      this.prevBtn?.addEventListener('click', () => this.goToPrevious());
+      this.nextBtn?.addEventListener('click', () => this.goToNext());
+      
+      // Dot navigation
+      this.dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => this.goToSlide(index));
+      });
+      
+      // Auto-rotation
+      if (this.autoRotate) {
+        this.startAutoRotation();
+        
+        // Pause on hover
+        const carousel = document.querySelector('.hero-carousel');
+        carousel?.addEventListener('mouseenter', () => this.pauseAutoRotation());
+        carousel?.addEventListener('mouseleave', () => this.startAutoRotation());
+      }
+      
+      // GLightbox events - pause carousel when lightbox opens
+      document.addEventListener('glightbox-open', () => {
+        this.pauseAutoRotation();
+      });
+      
+      document.addEventListener('glightbox-close', () => {
+        if (this.autoRotate) {
+          this.startAutoRotation();
+        }
+      });
+    }
+    
+    goToSlide(index) {
+      // Hide current slide
+      this.slides[this.currentIndex]?.classList.remove('opacity-100');
+      this.slides[this.currentIndex]?.classList.add('opacity-0');
+      this.dots[this.currentIndex]?.classList.remove('bg-white', 'scale-125');
+      this.dots[this.currentIndex]?.classList.add('bg-white/50');
+      
+      // Update index
+      this.currentIndex = (index + this.items.length) % this.items.length;
+      
+      // Show new slide
+      this.slides[this.currentIndex]?.classList.remove('opacity-0');
+      this.slides[this.currentIndex]?.classList.add('opacity-100');
+      this.dots[this.currentIndex]?.classList.remove('bg-white/50');
+      this.dots[this.currentIndex]?.classList.add('bg-white', 'scale-125');
+      
+      // Reset progress if auto-rotating
+      if (this.autoRotate) {
+        this.resetProgress();
+      }
+    }
+    
+    goToNext() {
+      this.goToSlide(this.currentIndex + 1);
+    }
+    
+    goToPrevious() {
+      this.goToSlide(this.currentIndex - 1);
+    }
+    
+    startAutoRotation() {
+      this.pauseAutoRotation(); // Clear any existing interval
+      
+      if (this.progressBar) {
+        this.resetProgress();
+        this.startProgress();
+      }
+      
+      this.intervalId = setInterval(() => {
+        this.goToNext();
+      }, this.rotationInterval);
+    }
+    
+    pauseAutoRotation() {
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+      }
+      if (this.progressInterval) {
+        clearInterval(this.progressInterval);
+        this.progressInterval = null;
+      }
+    }
+    
+    startProgress() {
+      if (!this.progressBar) return;
+      
+      let progress = 0;
+      const increment = 100 / (this.rotationInterval / 100);
+      
+      this.progressInterval = setInterval(() => {
+        progress += increment;
+        if (this.progressBar) {
+          this.progressBar.style.width = `${progress}%`;
+        }
+        if (progress >= 100) {
+          clearInterval(this.progressInterval);
+        }
+      }, 100);
+    }
+    
+    resetProgress() {
+      if (this.progressBar) {
+        this.progressBar.style.width = '0%';
+      }
+      if (this.progressInterval) {
+        clearInterval(this.progressInterval);
+        this.progressInterval = null;
+      }
+    }
+  }
+  
+  // Initialize carousel
+  const initCarousel = () => {
+    if (document.querySelector('.hero-carousel')) {
+      new HeroCarouselGLightbox();
+    }
+  };
+
+  // Initialize with multiple fallbacks
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCarousel);
+  } else {
+    initCarousel();
+  }
+  
+  window.addEventListener('load', () => {
+    if (!window.heroCarouselGLightboxInitialized) {
+      initCarousel();
+    }
+  });
+  
+  // Handle Astro page transitions
+  document.addEventListener('astro:page-load', initCarousel);
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Hero sizing: half width, twice height as requested */
+  .hero-sizing {
+    /* Mobile: doubled height from original */
+    height: 50vh;
+    min-height: 300px;
+    max-height: 400px;
+  }
+  
+  @media (min-width: 640px) {
+    .hero-sizing {
+      /* Tablet: doubled height */
+      height: 56vh;
+      min-height: 350px;
+      max-height: 450px;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .hero-sizing {
+      /* Desktop: doubled height */
+      height: 60vh;
+      min-height: 400px;
+      max-height: 500px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .hero-sizing {
+      /* Large desktop: doubled height */
+      height: 64vh;
+      min-height: 450px;
+      max-height: 550px;
+    }
+  }
+  
+  /* Maintain proper dimensions on tall screens */
+  @media (min-height: 900px) {
+    .hero-sizing {
+      max-height: 550px;
+    }
+  }
+  
+  .hero-carousel:hover .nav-btn {
+    opacity: 1;
+  }
+  
+  .nav-btn {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  @media (max-width: 768px) {
+    .nav-btn {
+      opacity: 1;
+    }
+  }
+  
+  /* Prevent GLightbox from interfering with carousel controls */
+  .nav-btn, .dot {
+    z-index: 10;
+    pointer-events: auto;
+  }
+  
+  /* Ensure streaming links don't trigger GLightbox */
+  .streaming-links a {
+    z-index: 20;
+    pointer-events: auto;
+  }
+</style>

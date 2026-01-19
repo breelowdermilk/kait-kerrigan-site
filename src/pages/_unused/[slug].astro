@@ -1,0 +1,127 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import defaultImg from '~/assets/images/default.jpg';
+
+export async function getStaticPaths() {
+  const shows = await getCollection('shows');
+  return shows.map((show) => ({
+    params: { slug: show.slug },
+    props: { show },
+  }));
+}
+
+const { show } = Astro.props;
+const { Content } = await show.render();
+
+const metadata = {
+  title: show.data.title,
+  description: show.data.synopsis 
+    ? show.data.synopsis.slice(0, 160) + (show.data.synopsis.length > 160 ? '...' : '')
+    : `${show.data.title} - Musical theatre work by Bree Lowdermilk`,
+  openGraph: {
+    type: 'article',
+    images: show.data.heroImage ? [{ url: show.data.heroImage }] : undefined,
+  },
+};
+
+const imageUrl = show.data.heroImage || defaultImg;
+---
+
+<PageLayout {metadata}>
+  <section class="px-6 sm:px-6 max-w-4xl mx-auto">
+    <div class="py-12 md:py-16 lg:py-20 mx-auto">
+      
+      <!-- Hero Image -->
+      <div class="mb-8">
+        <img 
+          src={imageUrl} 
+          alt={show.data.title || 'Show image'}
+          class="w-full max-w-2xl mx-auto rounded-lg shadow-lg object-cover"
+          width="800"
+          height="600"
+        />
+      </div>
+
+      <!-- Title -->
+      <header class="max-w-3xl mx-auto text-center mb-8">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading text-gray-900 dark:text-white">
+          {show.data.title || 'Untitled Show'}
+        </h1>
+      </header>
+
+      <!-- Synopsis -->
+      {show.data.synopsis && (
+        <div class="max-w-3xl mx-auto mb-8">
+          <div class="prose prose-lg dark:prose-invert mx-auto">
+            <p class="text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
+              {show.data.synopsis}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <!-- Main Content -->
+      <div class="max-w-3xl mx-auto mb-8">
+        <div class="prose prose-lg dark:prose-invert mx-auto">
+          <Content />
+        </div>
+      </div>
+
+      <!-- Gallery -->
+      {show.data.gallery && show.data.gallery.length > 0 && (
+        <div class="max-w-4xl mx-auto mb-8">
+          <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">Gallery</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {show.data.gallery.map((image, index) => {
+              // Derive alt from filename if not provided elsewhere
+              const filename = image.split('/').pop()?.split('.')[0] || `image-${index + 1}`;
+              const altText = `${filename.replace(/[-_]/g, ' ')} - ${show.data.title}`;
+              return (
+                <div class="aspect-square overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                  <img 
+                    src={image} 
+                    alt={altText}
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <!-- Credits -->
+      {show.data.credits && show.data.credits.length > 0 && (
+        <div class="max-w-3xl mx-auto mb-8">
+          <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Credits</h2>
+          <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+            {show.data.credits.map((credit, index) => (
+              <li key={index} class="text-lg">{credit}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <!-- Press Quotes -->
+      {show.data.pressQuotes && show.data.pressQuotes.length > 0 && (
+        <div class="max-w-3xl mx-auto">
+          <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Press</h2>
+          <div class="space-y-4">
+            {show.data.pressQuotes.map((quote, index) => (
+              <blockquote key={index} class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border-l-4 border-primary-600">
+                <p class="text-lg italic text-gray-700 dark:text-gray-300 mb-2">"{quote.quote}"</p>
+                <footer class="text-sm text-gray-600 dark:text-gray-400">
+                  — <cite>{quote.outlet}</cite>
+                  {quote.date && <span class="ml-2">({quote.date})</span>}
+                </footer>
+              </blockquote>
+            ))}
+          </div>
+        </div>
+      )}
+
+    </div>
+  </section>
+</PageLayout>

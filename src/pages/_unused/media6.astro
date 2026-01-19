@@ -1,0 +1,74 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { spotifyAlbums } from '~/data/media/youtube-performances.js';
+
+const metadata = {
+  title: 'Listen | Bree Lowdermilk',
+  description: 'Stream Kerrigan-Lowdermilk music directly on our site',
+};
+
+// Your actual Spotify track IDs - replace these with your real track IDs
+const tracks = [
+  { title: 'Run Away With Me', artist: 'The Mad Ones Cast', id: '5n8Aro6j1bEGIy7Tpo7FV7' },
+  { title: 'Freedom', artist: 'The Mad Ones Cast', id: '0VgkVdmE4gld66l8iyGjgx' },
+  { title: 'Say the Word', artist: 'Kerrigan-Lowdermilk', id: '3Kkjo3cT83cw09VJyrLNwZ' },
+  { title: 'When It Happens to You', artist: 'Kerrigan-Lowdermilk', id: '3eGKL2Lh6SWjBScP2HLUNa' },
+  { title: 'Holding On', artist: 'Kerrigan-Lowdermilk Live', id: '6xJ7V8tkoJNgzY8YtWFPD9' },
+  { title: 'One Last Prayer', artist: 'Kerrigan-Lowdermilk', id: '2mQJQNPCmV5HhGnRrIJvNO' },
+  { title: 'Miles to Go', artist: 'Kerrigan-Lowdermilk', id: '1YzB7QVuHba5repMmPIRc7' },
+  { title: 'Anyway', artist: 'Kerrigan-Lowdermilk', id: '4HCgj8sRdqBjmMiCNQJZ3B' },
+];
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 mx-auto max-w-4xl">
+    <h1 class="text-4xl font-bold mb-2 text-center">Listen Now</h1>
+    <p class="text-gray-600 dark:text-gray-400 text-center mb-12">Stream our music directly from this page</p>
+
+    <!-- Track Players -->
+    <div class="space-y-6">
+      {tracks.map((track) => (
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div class="mb-4">
+            <h3 class="text-xl font-semibold">{track.title}</h3>
+            <p class="text-gray-600 dark:text-gray-400">{track.artist}</p>
+          </div>
+          <iframe
+            src={`https://open.spotify.com/embed/track/${track.id}?utm_source=generator`}
+            width="100%"
+            height="152"
+            frameBorder="0"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+            class="rounded-lg"
+          ></iframe>
+        </div>
+      ))}
+    </div>
+
+    <!-- Full Albums Section -->
+    <div class="mt-16">
+      <h2 class="text-3xl font-bold mb-8 text-center">Full Albums</h2>
+      
+      <div class="space-y-8">
+        {spotifyAlbums.map((album) => (
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold mb-4">{album.title} ({album.year})</h3>
+            <iframe
+              src={`https://open.spotify.com/embed/album/${album.spotifyId}?utm_source=generator`}
+              width="100%"
+              height="450"
+              frameBorder="0"
+              allowfullscreen=""
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              class="rounded-lg"
+            ></iframe>
+          </div>
+        ))}
+      </div>
+    </div>
+
+  </section>
+</Layout>

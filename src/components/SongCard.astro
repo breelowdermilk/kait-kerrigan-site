@@ -1,0 +1,74 @@
+---
+import type { CollectionEntry } from 'astro:content';
+export interface Props {
+  song: CollectionEntry<'songs'>;
+}
+const { song } = Astro.props;
+const data = song.data;
+---
+
+<article class="song-card">
+  <a href={`/songs/${data.slug}`} class="title">{data.title}</a>
+  {
+    data.show && (
+      <div class="meta">
+        From <strong>{data.show}</strong>
+      </div>
+    )
+  }
+  {
+    data.voiceTypes?.length ? (
+      <ul class="pills">
+        {data.voiceTypes.map((v) => (
+          <li>{v}</li>
+        ))}
+      </ul>
+    ) : null
+  }
+  {data.keys?.length ? <div class="keys">Keys: {data.keys.map((k) => k.name).join(', ')}</div> : null}
+  {
+    data.sheetMusic?.url && (
+      <a class="btn" href={data.sheetMusic.url} target="_blank" rel="noopener">
+        Sheet Music
+      </a>
+    )
+  }
+</article>
+
+<style>
+  .song-card {
+    display: block;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 12px;
+  }
+  .title {
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .pills {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+  }
+  .pills li {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    font-size: 0.85rem;
+  }
+  .keys {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 0.25rem 0 0.75rem;
+  }
+  .btn {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid currentColor;
+    text-decoration: none;
+  }
+</style>

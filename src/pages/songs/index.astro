@@ -1,0 +1,23 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import SongCard from '~/components/SongCard.astro';
+import { getCollection } from 'astro:content';
+
+const songs = (await getCollection('songs', (e) => e.data.published !== false)).sort((a, b) =>
+  a.data.title.localeCompare(b.data.title)
+);
+
+const metadata = {
+  title: 'Songs',
+  description: 'Song catalog',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6">Songs</h1>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {songs.map((song) => <SongCard song={song} />)}
+    </div>
+  </section>
+</Layout>

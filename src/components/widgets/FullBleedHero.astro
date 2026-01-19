@@ -1,0 +1,169 @@
+---
+import Button from '~/components/ui/Button.astro';
+
+interface Action {
+  href: string;
+  text: string;
+  variant?: string;
+}
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  actions?: Action[];
+  /** Path under `public` or processed asset path */
+  imageUrl: string;
+  /** Optional mobile-specific background image */
+  imageUrlMobile?: string;
+  /** CSS background-position value */
+  position?: string;
+  /** Mobile CSS background-position value */
+  mobilePosition?: string;
+  /** 0–1 overlay strength for readability */
+  overlay?: number;
+  /** Optional solid color to extend at bottom */
+  extendColor?: string;
+  id?: string;
+  /** Minimum viewport height to show */
+  minVh?: number;
+  /** Minimum viewport height for mobile */
+  mobileMinVh?: number;
+  /** Optional right-anchored foreground subject (non-cropping) */
+  subjectUrl?: string;
+  subjectAlt?: string;
+  /** Max height of subject relative to viewport */
+  subjectMaxVh?: number;
+  /** Raise the subject upward by N vh (negative moves down) */
+  subjectOffsetY?: number;
+  /** Vertical alignment for content block */
+  contentAlign?: 'start' | 'center' | 'end';
+  /** Vertical alignment for content on mobile */
+  mobileContentAlign?: 'start' | 'center' | 'end';
+  /** Move content block up by N vh */
+  contentOffsetY?: number;
+  /** Text alignment for title/subtitle/buttons */
+  textAlign?: 'left' | 'center' | 'right';
+  /** Move content block up by N vh on mobile */
+  mobileContentOffsetY?: number;
+  /** Text alignment for mobile */
+  mobileTextAlign?: 'left' | 'center' | 'right';
+}
+
+const {
+  title,
+  subtitle,
+  actions = [],
+  imageUrl,
+  imageUrlMobile,
+  position = 'right center',
+  mobilePosition = 'center top',
+  overlay = 0,
+  extendColor = 'transparent',
+  id,
+  minVh = 100,
+  mobileMinVh,
+  subjectUrl,
+  subjectAlt = '',
+  subjectMaxVh = 90,
+  subjectOffsetY = 0,
+  contentAlign = 'center',
+  mobileContentAlign,
+  contentOffsetY = 0,
+  textAlign = 'left',
+  mobileContentOffsetY,
+  mobileTextAlign,
+} = Astro.props as Props;
+
+// Allow passing a CSS image-set() string for better format fallbacks
+const bgImage = imageUrl?.startsWith('image-set(')
+  ? imageUrl
+  : imageUrl
+  ? `url('${imageUrl}')`
+  : '';
+
+const bgImageMobile = (imageUrlMobile ?? imageUrl)?.startsWith('image-set(')
+  ? (imageUrlMobile ?? imageUrl)
+  : imageUrlMobile
+  ? `url('${imageUrlMobile}')`
+  : bgImage;
+---
+
+<section class="relative not-prose md:-mt-[76px]" {...id ? { id } : {}}>
+  <!-- Background image and overlays -->
+  {imageUrl && (
+    <>
+      <div
+        class="absolute inset-0 bg-no-repeat bg-cover md:hidden"
+        style={`background-image: linear-gradient(rgba(0,0,0,${overlay}), rgba(0,0,0,${overlay})), ${bgImageMobile}; background-position: ${mobilePosition};`}
+        aria-hidden="true"
+      />
+      <div
+        class="absolute inset-0 bg-no-repeat bg-cover hidden md:block"
+        style={`background-image: linear-gradient(rgba(0,0,0,${overlay}), rgba(0,0,0,${overlay})), ${bgImage}; background-position: ${position};`}
+        aria-hidden="true"
+      />
+    </>
+  )}
+  {extendColor !== 'transparent' && (
+    <div
+      class="absolute inset-x-0 bottom-0"
+      style={`height: 25vh; background: linear-gradient(to bottom, rgba(0,0,0,0), ${extendColor});`}
+      aria-hidden="true"
+    />
+  )}
+
+  <!-- Content -->
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="pt-0 md:pt-[76px] pointer-events-none"></div>
+
+    <!-- Mobile content -->
+    <div class={`md:hidden min-h-[80vh] flex ${ (mobileContentAlign ?? contentAlign) === 'start' ? 'items-start' : (mobileContentAlign ?? contentAlign) === 'end' ? 'items-end' : 'items-center'}`} style={`min-height: ${(mobileMinVh ?? minVh)}vh;`}>
+      <div class={`max-w-2xl py-16 ${ (mobileTextAlign ?? textAlign) === 'center' ? 'text-center' : (mobileTextAlign ?? textAlign) === 'right' ? 'text-right' : 'text-left'}`} style={`transform: translateY(-${mobileContentOffsetY ?? contentOffsetY}vh);`}>
+        <h1 class="bree-h1 text-5xl leading-tighter tracking-tighter mb-6">
+          {title}
+        </h1>
+        {subtitle && (<p class="text-xl text-muted mb-8">{subtitle}</p>)}
+        {Array.isArray(actions) && actions.length > 0 && (
+          <div class={`flex flex-col sm:flex-row gap-4 ${ (mobileTextAlign ?? textAlign) === 'center' ? 'items-center justify-center' : ''}`}>
+            {actions.map((a) => (
+              <div class="flex w-full sm:w-auto">
+                <Button {...a} class="w-full sm:mb-0" />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+
+    <!-- Desktop/Tablet content -->
+    <div class={`hidden md:flex min-h-[80vh] ${contentAlign === 'start' ? 'items-start' : contentAlign === 'end' ? 'items-end' : 'items-center'}`} style={`min-height: ${minVh}vh;`}>
+      <div class={`max-w-2xl py-16 ${textAlign === 'center' ? 'text-center' : textAlign === 'right' ? 'text-right' : 'text-left'}`} style={`transform: translateY(-${contentOffsetY}vh);`}>
+        <h1 class="bree-h1 text-6xl leading-tighter tracking-tighter mb-6">
+          {title}
+        </h1>
+        {subtitle && (<p class="text-xl text-muted mb-8">{subtitle}</p>)}
+        {Array.isArray(actions) && actions.length > 0 && (
+          <div class={`flex flex-col sm:flex-row gap-4 ${textAlign === 'center' ? 'items-center justify-center' : ''}`}>
+            {actions.map((a) => (
+              <div class="flex w-full sm:w-auto">
+                <Button {...a} class="w-full sm:mb-0" />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+
+  {subjectUrl && (
+    <div class="pointer-events-none absolute inset-0 flex items-end justify-end">
+      <img
+        src={subjectUrl}
+        alt={subjectAlt}
+        style={`max-height: min(${subjectMaxVh}vh, 1400px); height: auto; width: auto; transform: translateY(-${subjectOffsetY}vh);`}
+        class="mr-[min(4vw,32px)] mb-[min(2vh,16px)]"
+        loading="eager"
+      />
+    </div>
+  )}
+</section>

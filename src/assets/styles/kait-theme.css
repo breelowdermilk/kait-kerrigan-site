@@ -1,0 +1,340 @@
+/* Kait Kerrigan - Editorial/Literary Theme */
+
+/* Font Imports */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* CSS Variables */
+:root {
+  /* Primary Colors - Navy & Gold */
+  --navy-primary: #1a365d;
+  --navy-hover: #2c5282;
+  --gold-accent: #d69e2e;
+  --gold-hover: #b7881c;
+
+  /* Background Colors */
+  --bg-cream: #faf8f5;
+  --bg-white: #ffffff;
+
+  /* Text Colors */
+  --text-charcoal: #2d3748;
+  --text-medium: #4a5568;
+  --text-light: #718096;
+
+  /* Border */
+  --border-subtle: #e2e0dc;
+
+  /* Font Variables */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Libre Baskerville', Georgia, serif;
+  --font-ui: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Base Styles */
+body {
+  background: var(--bg-cream);
+  font-family: var(--font-body);
+  color: var(--text-medium);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* Main Titles (Hero/Display) */
+.main-title, .hero-title {
+  font-family: var(--font-display);
+  font-size: 4.5rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: var(--gold-accent);
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(26, 54, 93, 0.1);
+}
+
+/* H1 Headings - Page titles */
+.bree-h1 {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 400;
+  color: var(--navy-primary);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+/* Smaller H1 for interior pages */
+.bree-h1-small {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 400;
+  color: var(--navy-primary);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+/* H2-H4 Headings */
+.bree-h2, .bree-h3, .bree-h4 {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  color: var(--text-charcoal);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+
+.bree-h2 { font-size: 1.75rem; }
+.bree-h3 { font-size: 1.5rem; }
+.bree-h4 { font-size: 1.25rem; font-weight: 500; }
+
+/* Header with Cream Background */
+.bree-header {
+  background: var(--bg-cream);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: all 0.3s ease;
+}
+
+/* Header text styling */
+.bree-header h1,
+.bree-header nav a {
+  font-family: var(--font-ui) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.03em !important;
+  transition: color 0.3s ease !important;
+}
+
+/* Default header state */
+.bree-header h1,
+.bree-header nav a {
+  color: var(--navy-primary) !important;
+}
+
+/* Light header state (when scrolled) */
+.bree-header.header-scrolled h1,
+.bree-header.header-scrolled nav a {
+  color: var(--text-charcoal) !important;
+}
+
+/* Support alternate class names */
+.bree-header.nav-scrolled h1,
+.bree-header.nav-scrolled nav a { color: var(--text-charcoal) !important; }
+.bree-header.nav-scrolled nav a:hover { color: var(--gold-accent) !important; }
+.bree-header.nav-top h1,
+.bree-header.nav-top nav a { color: var(--navy-primary) !important; }
+
+/* Logo styling */
+.bree-header .logo-text {
+  color: var(--navy-primary) !important;
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+}
+
+/* Hover states */
+.bree-header nav a:hover {
+  color: var(--gold-accent) !important;
+}
+
+.bree-header.header-scrolled nav a:hover {
+  color: var(--gold-hover) !important;
+}
+
+/* Scrolled header state */
+#header.scroll { background: var(--bg-white) !important; color: var(--text-charcoal) !important; }
+#header.scroll nav a { color: var(--text-charcoal) !important; }
+#header.scroll nav a:hover { color: var(--gold-accent) !important; }
+#header.scroll .logo-text, #header.scroll h1 { color: var(--navy-primary) !important; }
+#header.scroll .aw-link-active { color: var(--navy-primary) !important; }
+#header.scroll svg, #header.scroll .icon { color: var(--navy-primary) !important; }
+
+/* Primary Buttons - Navy with gold hover */
+.btn-primary {
+  background: var(--navy-primary);
+  color: var(--bg-cream);
+  padding: 12px 28px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-family: var(--font-ui);
+  transition: all 0.2s ease;
+  border: 2px solid var(--navy-primary);
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--navy-hover);
+  border-color: var(--gold-accent);
+  transform: translateY(-1px);
+}
+
+/* Outline Buttons */
+.btn-outline {
+  background: transparent;
+  color: var(--navy-primary);
+  padding: 12px 28px;
+  border: 2px solid var(--navy-primary);
+  border-radius: 4px;
+  font-weight: 500;
+  font-family: var(--font-ui);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background: var(--navy-primary);
+  color: var(--bg-cream);
+}
+
+/* Links */
+.bree-link {
+  color: var(--navy-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  border-bottom: 1px solid var(--gold-accent);
+}
+
+.bree-link:hover {
+  color: var(--gold-accent);
+  border-bottom-color: var(--gold-hover);
+}
+
+/* Cards with subtle gold border */
+.card-glass {
+  background: var(--bg-white);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 20px rgba(26, 54, 93, 0.06),
+              0 1px 4px rgba(214, 158, 46, 0.04);
+  border-radius: 8px;
+}
+
+/* Media cards */
+.media-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 8px 30px rgba(26, 54, 93, 0.08),
+              0 2px 8px rgba(214, 158, 46, 0.03);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.media-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold-accent);
+  box-shadow: 0 16px 48px rgba(26, 54, 93, 0.12),
+              0 4px 16px rgba(214, 158, 46, 0.08);
+}
+
+/* Section containers */
+.media-section {
+  padding: 80px 0;
+}
+
+.media-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Featured content styling */
+.featured-content {
+  background: linear-gradient(135deg,
+    rgba(26, 54, 93, 0.02) 0%,
+    rgba(250, 248, 245, 0.5) 50%,
+    rgba(214, 158, 46, 0.02) 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 48px;
+}
+
+/* Horizontal rules - thin gold lines */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-accent), transparent);
+  margin: 2rem 0;
+}
+
+/* Pull quotes */
+blockquote {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-style: italic;
+  color: var(--text-charcoal);
+  border-left: 3px solid var(--gold-accent);
+  padding-left: 1.5rem;
+  margin: 2rem 0;
+}
+
+blockquote::before {
+  content: '"';
+  font-size: 3rem;
+  color: var(--gold-accent);
+  line-height: 0;
+  vertical-align: -0.5rem;
+  margin-right: 0.25rem;
+}
+
+/* Award badges */
+.award-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  color: var(--gold-hover);
+  border: 1px solid var(--gold-accent);
+  border-radius: 20px;
+  background: rgba(214, 158, 46, 0.08);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .main-title, .hero-title {
+    font-size: 2.75rem;
+    letter-spacing: 0.01em;
+  }
+
+  .bree-h1 {
+    font-size: 2.5rem;
+  }
+
+  .bree-h1-small {
+    font-size: 2rem;
+  }
+
+  .featured-content {
+    padding: 24px;
+  }
+
+  .media-container {
+    padding: 0 16px;
+  }
+
+  blockquote {
+    font-size: 1.25rem;
+  }
+}
+
+/* Dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-cream: #1a202c;
+    --bg-white: #2d3748;
+    --text-charcoal: #f7fafc;
+    --text-medium: #e2e8f0;
+    --text-light: #a0aec0;
+    --border-subtle: #4a5568;
+  }
+
+  .card-glass, .media-card {
+    background: var(--bg-white);
+    border-color: var(--border-subtle);
+  }
+
+  .bree-header {
+    background: var(--bg-cream);
+  }
+
+  .bree-header h1,
+  .bree-header nav a,
+  .bree-header .logo-text {
+    color: var(--gold-accent) !important;
+  }
+}

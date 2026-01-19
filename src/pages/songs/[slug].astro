@@ -1,0 +1,106 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { getCollection } from 'astro:content';
+import YouTube from '~/components/YouTube.astro';
+import songJsonLd from '~/lib/jsonld/song';
+
+export async function getStaticPaths() {
+  const all = await getCollection('songs');
+  return all.map((s) => ({ params: { slug: s.slug } }));
+}
+
+const { slug } = Astro.params;
+const songs = await getCollection('songs');
+const song = songs.find((s) => s.slug === slug);
+if (!song) throw new Error('Song not found');
+
+const data = song.data;
+const related = songs.filter((s) => s.slug !== slug && s.data.show && s.data.show === data.show).slice(0, 6);
+
+const metadata = {
+  title: `${data.title}${data.show ? ' — ' + data.show : ''}`,
+  description: data.lyricExcerpt ?? 'Song detail',
+};
+---
+<Layout metadata={metadata}>
+  <script type="application/ld+json">{JSON.stringify(songJsonLd({
+    title: data.title,
+    slug: song.slug,
+    show: data.show,
+    media: data.media,
+    credits: data.credits,
+  }))}</script>
+
+  <article class="container mx-auto py-8">
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold">{data.title}</h1>
+      {data.show && <p class="text-muted-800 dark:text-muted-200">From <strong>{data.show}</strong></p>}
+    </header>
+
+    <section class="grid gap-6 md:grid-cols-3 mb-8">
+      <div class="md:col-span-2 space-y-4">
+        {data.media?.youtubeId && <YouTube id={data.media.youtubeId} title={data.title} />}
+
+        {data.lyricExcerpt && (
+          <details class="lyrics mt-4">
+            <summary class="cursor-pointer font-semibold">Lyrics</summary>
+            <div class="prose dark:prose-invert mt-2">
+              <p>{data.lyrics ?? data.lyricExcerpt}</p>
+            </div>
+          </details>
+        )}
+      </div>
+
+      <aside class="space-y-4">
+        {data.voiceTypes?.length ? (
+          <div>
+            <h2 class="font-semibold mb-2">Voice Types</h2>
+            <ul class="flex flex-wrap gap-2">
+              {data.voiceTypes.map((v) => <li class="pill">{v}</li>)}
+            </ul>
+          </div>
+        ) : null}
+
+        {data.keys?.length ? (
+          <div>
+            <h2 class="font-semibold mb-2">Keys & Range</h2>
+            <ul class="space-y-1">
+              {data.keys.map((k) => (
+                <li>{k.name}{k.range ? ` — ${k.range}` : ''}{k.isOriginal ? ' (Original)' : ''}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {data.moods?.length ? (
+          <div>
+            <h2 class="font-semibold mb-2">Moods</h2>
+            <ul class="flex flex-wrap gap-2">
+              {data.moods.map((m) => <li class="pill">{m}</li>)}
+            </ul>
+          </div>
+        ) : null}
+
+        {data.sheetMusic?.url && (
+          <a class="btn" href={data.sheetMusic.url} target="_blank" rel="noopener">Get Sheet Music</a>
+        )}
+      </aside>
+    </section>
+
+    {related.length ? (
+      <section class="mt-10">
+        <h2 class="text-xl font-semibold mb-3">Related Songs</h2>
+        <ul class="list-disc ml-6 space-y-1">
+          {related.map((r) => (
+            <li><a href={`/songs/${r.slug}`}>{r.data.title}</a></li>
+          ))}
+        </ul>
+      </section>
+    ) : null}
+  </article>
+
+  <style>
+    .pill{padding:.25rem .5rem;border:1px solid var(--aw-color-muted-200,#ddd);border-radius:999px;font-size:.85rem}
+    .btn{display:inline-block;padding:.5rem .75rem;border-radius:8px;border:1px solid currentColor;text-decoration:none}
+  </style>
+</Layout>

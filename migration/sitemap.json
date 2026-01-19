@@ -1,0 +1,50 @@
+[
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/",
+    "path": "/"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/about",
+    "path": "/about"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/shows",
+    "path": "/shows"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/albums",
+    "path": "/albums"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/news",
+    "path": "/news"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/sheet-music",
+    "path": "/sheet-music"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/connect",
+    "path": "/connect"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/news/2018/10/03/kennedy-center-earthrise-commission-announced",
+    "path": "/news/2018/10/03/kennedy-center-earthrise-commission-announced"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/news/2018/09/14/catch-rosie-revere-engineer-and-friends-on-its-first-national-tour",
+    "path": "/news/2018/09/14/catch-rosie-revere-engineer-and-friends-on-its-first-national-tour"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/news/2018/09/10/sheet-music-for-title-song-from-the-mad-ones-now-available",
+    "path": "/news/2018/09/10/sheet-music-for-title-song-from-the-mad-ones-now-available"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/news/2018/09/14/kait-and-brian-pen-score-for-new-musical-based-on-popular-rosie-revere-engineer-series-",
+    "path": "/news/2018/09/14/kait-and-brian-pen-score-for-new-musical-based-on-popular-rosie-revere-engineer-series-"
+  },
+  {
+    "url": "http://cpanel.kerrigan-lowdermilk.com/news/2018/09/14/kait-and-brian-on-billboard-on-broadway-podcast",
+    "path": "/news/2018/09/14/kait-and-brian-on-billboard-on-broadway-podcast"
+  }
+]

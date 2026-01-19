@@ -1,0 +1,173 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { spotifyAlbums } from '~/data/media/youtube-performances.js';
+
+const metadata = {
+  title: 'Media - Spotify Demo | Bree Lowdermilk',
+  description: 'Spotify integration examples for the media page',
+};
+
+// Sample data mapping songs to Spotify track IDs
+const spotifyTracks = [
+  {
+    title: "Run Away With Me",
+    performer: "The Mad Ones Cast",
+    spotifyTrackId: "5n8Aro6j1bEGIy7Tpo7FV7", // Replace with actual ID
+    spotifyUrl: "https://open.spotify.com/track/5n8Aro6j1bEGIy7Tpo7FV7"
+  },
+  {
+    title: "Freedom",
+    performer: "The Mad Ones Cast",
+    spotifyTrackId: "0VgkVdmE4gld66l8iyGjgx", // Replace with actual ID
+    spotifyUrl: "https://open.spotify.com/track/0VgkVdmE4gld66l8iyGjgx"
+  },
+  {
+    title: "Say the Word",
+    performer: "Kerrigan-Lowdermilk",
+    spotifyTrackId: "3Kkjo3cT83cw09VJyrLNwZ", // Replace with actual ID
+    spotifyUrl: "https://open.spotify.com/track/3Kkjo3cT83cw09VJyrLNwZ"
+  }
+];
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 py-12 md:py-20 max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8">Spotify Integration Options</h1>
+    
+    <!-- Option 1: Spotify Embed Players -->
+    <div class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">Option 1: Embedded Spotify Players</h2>
+      <p class="mb-6 text-gray-600">Full embedded players for individual tracks</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {spotifyTracks.slice(0, 2).map((track) => (
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="font-semibold mb-3">{track.title}</h3>
+            <iframe
+              src={`https://open.spotify.com/embed/track/${track.spotifyTrackId}?utm_source=generator`}
+              width="100%"
+              height="152"
+              frameBorder="0"
+              allowfullscreen=""
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+            ></iframe>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Option 2: Compact Embed (Single Track) -->
+    <div class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">Option 2: Compact Player</h2>
+      <p class="mb-6 text-gray-600">Smaller embed with just play button</p>
+      
+      <div class="max-w-md">
+        <iframe
+          src={`https://open.spotify.com/embed/track/${spotifyTracks[0].spotifyTrackId}?utm_source=generator&theme=0`}
+          width="100%"
+          height="80"
+          frameBorder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- Option 3: Album Embeds -->
+    <div class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">Option 3: Full Album Embeds</h2>
+      <p class="mb-6 text-gray-600">Embed entire albums with track listings</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {spotifyAlbums.map((album) => (
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="font-semibold mb-3">{album.title}</h3>
+            <iframe
+              src={`https://open.spotify.com/embed/album/${album.spotifyId}?utm_source=generator`}
+              width="100%"
+              height="380"
+              frameBorder="0"
+              allowfullscreen=""
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+            ></iframe>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Option 4: Spotify Links with Icons -->
+    <div class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">Option 4: Simple Links with Spotify Icon</h2>
+      <p class="mb-6 text-gray-600">Clean links that open Spotify (web or app)</p>
+      
+      <div class="space-y-3">
+        {spotifyTracks.map((track) => (
+          <a
+            href={track.spotifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 p-3 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors group"
+          >
+            <svg class="w-8 h-8 text-green-500" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+            </svg>
+            <div class="flex-1">
+              <span class="font-semibold group-hover:text-green-600">{track.title}</span>
+              <span class="text-gray-500 text-sm ml-2">by {track.performer}</span>
+            </div>
+            <span class="text-xs bg-green-500 text-white px-2 py-1 rounded-full">Open in Spotify</span>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Option 5: Hybrid - Performance Cards with Spotify Links -->
+    <div class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">Option 5: Performance Cards with Spotify Links</h2>
+      <p class="mb-6 text-gray-600">Cards that combine YouTube performances with Spotify links when available</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {spotifyTracks.map((track, index) => (
+          <div class="bg-white border rounded-lg overflow-hidden shadow-md">
+            <div class="aspect-video bg-gray-200 relative">
+              <img 
+                src={`/src/assets/images/media/placeholder-${index + 1}.jpg`}
+                alt={track.title}
+                class="w-full h-full object-cover"
+                onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%22200%22 y=%22150%22 font-family=%22sans-serif%22 font-size=%2224%22 fill=%22%239ca3af%22 text-anchor=%22middle%22%3EVideo Thumbnail%3C/text%3E%3C/svg%3E'"
+              />
+              <button class="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/50 transition-colors">
+                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="p-4">
+              <h3 class="font-bold text-lg mb-1">{track.title}</h3>
+              <p class="text-gray-600 text-sm mb-3">{track.performer}</p>
+              <div class="flex gap-2">
+                <a
+                  href="#"
+                  class="flex-1 text-center py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+                >
+                  Watch on YouTube
+                </a>
+                <a
+                  href={track.spotifyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex-1 text-center py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+                >
+                  Listen on Spotify
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

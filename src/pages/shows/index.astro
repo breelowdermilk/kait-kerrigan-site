@@ -1,0 +1,426 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import MediaTileOverlay from '~/components/media/MediaTileOverlay.astro';
+import defaultImg from '~/assets/images/default.jpg';
+// Inline GLightbox init for shows page (CDN-only, simple and robust)
+
+const shows = await getCollection('shows');
+
+// Explicit custom ordering (by slug)
+const showOrder = [
+  'ernxst',
+  'justice',
+  'the-mad-ones',
+  'ada-twist-scientist',
+  'republic',
+  'kill-the-boy-band',
+  'tales-from-the-bad-years',
+];
+
+const sortedShows = shows
+  .filter((s) => showOrder.includes(s.slug))
+  .sort((a, b) => showOrder.indexOf(a.slug) - showOrder.indexOf(b.slug));
+
+// Render content for each show to include in inline modals
+const showsWithContent = await Promise.all(
+  sortedShows.map(async (show) => {
+    const { Content } = await show.render();
+    return { ...show, Content };
+  })
+);
+
+const metadata = {
+  title: 'Shows - Bree Lowdermilk',
+  description: 'Explore musicals and theatrical works by Bree Lowdermilk, featuring original compositions, lyrics, and collaborative projects',
+  openGraph: {
+    type: 'website',
+  },
+};
+---
+
+<PageLayout {metadata}>
+  <!-- GLightbox CSS/JS (CDN) and page-scoped init -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js" defer></script>
+  <script is:inline>
+    // Version marker to verify fresh bundle in browser devtools
+    try { console.log('[shows] version: 2025-09-04T14:22Z | enforced order', ['ernxst','justice','the-mad-ones','ada-twist-scientist','republic','kill-the-boy-band','tales-from-the-bad-years']); } catch {}
+    const setupShowsLightbox = () => {
+      if (!window.GLightbox) {
+        // Wait for CDN script to attach
+        setTimeout(setupShowsLightbox, 60);
+        return;
+      }
+      if (window.__showsLightbox) {
+        try { window.__showsLightbox.destroy(); } catch {}
+      }
+      window.__showsLightbox = window.GLightbox({
+        selector: 'a.glightbox[data-type="inline"]',
+        loop: false,
+        touchNavigation: true,
+        closeOnOutsideClick: true,
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        slideEffect: 'slide',
+      });
+      // Set a semi-transparent gray overlay, not black
+      const overlayEl = () => document.querySelector('.goverlay');
+      const setDimOverlay = () => {
+        const o = overlayEl();
+        if (!o) return;
+        o.style.background = 'rgba(31, 41, 55, 0.66)';
+      };
+      window.__showsLightbox.on('open', setDimOverlay);
+      window.__showsLightbox.on('slide_changed', setDimOverlay);
+      window.__showsLightbox.on('close', () => { const o = overlayEl(); if (o) o.style.background = ''; });
+      // Debug: count anchors
+      try {
+        const count = document.querySelectorAll('a.glightbox[data-type="inline"]').length;
+        console.log(`[shows] GLightbox bound to ${count} inline anchors`);
+      } catch {}
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupShowsLightbox);
+    } else {
+      setupShowsLightbox();
+    }
+    document.addEventListener('astro:page-load', setupShowsLightbox);
+  </script>
+  
+  <section class="px-6 sm:px-6 max-w-7xl mx-auto">
+    <div class="py-12 md:py-16 lg:py-20 mx-auto">
+      <header class="max-w-3xl mx-auto text-center mb-12">
+        <h1 class="bree-h1-small mb-4">
+          Shows
+        </h1>
+      </header>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+        {showsWithContent.map((show) => {
+          const imageUrl = show.data.heroImage || defaultImg;
+          const basedOn = Array.isArray(show.data.credits)
+            ? show.data.credits.find((c) => c?.trim()?.toLowerCase()?.startsWith('based on'))
+            : undefined;
+          const remainingCredits = Array.isArray(show.data.credits)
+            ? show.data.credits.filter((c) => !(c?.trim()?.toLowerCase()?.startsWith('based on')))
+            : [];
+          const shortBlurb = show.data.synopsis
+            ? (() => {
+                const words = show.data.synopsis.trim().split(/\s+/);
+                const slice = words.slice(0, 9).join(' ');
+                return slice + (words.length > 9 ? '…' : '');
+              })()
+            : '';
+
+          return (
+            <MediaTileOverlay
+              title={show.data.title}
+              subtitle={show.data.status || show.data.year}
+              category={show.data.venue || ''}
+              className="aspect-[7/8] show-tile"
+              credits={show.data.credits}
+              shortBlurb={shortBlurb}
+            >
+              <a
+                href={`#show-${show.slug}`}
+                class="glightbox block w-full h-full relative"
+                data-gallery="shows"
+                data-title={show.data.title}
+                data-type="inline"
+                data-width="900"
+                data-height="720"
+              >
+                <img
+                  src={imageUrl}
+                  alt={show.data.title || 'Show poster'}
+                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </a>
+            </MediaTileOverlay>
+          );
+        })}
+      </div>
+      
+      {sortedShows.length === 0 && (
+        <div class="text-center py-12">
+          <p class="text-gray-600 dark:text-gray-400">No shows available at this time.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Hidden inline modal content for each show -->
+  {showsWithContent.map((show) => {
+    const imageUrl = show.data.heroImage || defaultImg;
+    const basedOn = Array.isArray(show.data.credits)
+      ? show.data.credits.find((c) => c?.trim()?.toLowerCase()?.startsWith('based on'))
+      : undefined;
+    const remainingCredits = Array.isArray(show.data.credits)
+      ? show.data.credits.filter((c) => !(c?.trim()?.toLowerCase()?.startsWith('based on')))
+      : [];
+    return (
+      <div id={`show-${show.slug}`} class="show-modal-content" style="display: none;" aria-hidden="true">
+        <div class="modal-inner">
+          <!-- Content on Left -->
+          <div class="modal-content-body">
+            <h2 class="modal-title">
+              {show.slug === 'ernxst' && typeof show.data.title === 'string' && show.data.title.includes(', or ')
+                ? (() => {
+                    const parts = show.data.title.split(', or ');
+                    return (
+                      <>
+                        <span class="modal-title-line1">{parts[0]}</span>
+                        <span class="modal-title-line2">{"or "}{parts[1]}</span>
+                      </>
+                    );
+                  })()
+                : (show.data.title || 'Untitled Show')}
+            </h2>
+            {basedOn && (
+              <p class="modal-based-on">{basedOn}</p>
+            )}
+            
+            {show.data.status && (
+              <span class={`modal-status-badge ${
+                show.data.status === 'licensed'
+                  ? 'status-licensed'
+                  : show.data.status === 'touring'
+                  ? 'status-touring'
+                  : show.data.status === 'development'
+                  ? 'status-development'
+                  : 'status-archived'
+              }`}>
+                {show.data.status.charAt(0).toUpperCase() + show.data.status.slice(1)}
+              </span>
+            )}
+            
+            {/* Synopsis */}
+            {show.data.synopsis && (
+              <div class="modal-section">
+                <p class="modal-synopsis">{show.data.synopsis}</p>
+              </div>
+            )}
+            
+            {/* Main Content from Markdown */}
+            {show.Content && (
+              <div class="modal-section modal-markdown-content">
+                <show.Content />
+              </div>
+            )}
+            
+            {/* Credits (left-justified lines, same size as synopsis) */}
+            {remainingCredits && remainingCredits.length > 0 && (
+              <div class="modal-section">
+                <div class="modal-credits-inline">
+                  {remainingCredits.map((credit) => (
+                    <p class="credit-line">{credit}</p>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Press Quotes */}
+            {show.data.pressQuotes && show.data.pressQuotes.length > 0 && (
+              <div class="modal-section">
+                <h3 class="modal-section-title">Press</h3>
+                <div class="modal-quotes">
+                  {show.data.pressQuotes.map((quote) => (
+                    <blockquote class="modal-quote">
+                      <p>"{quote.quote}"</p>
+                      <footer>
+                        — <cite>{quote.outlet}</cite>
+                        {quote.date && <span class="quote-date">({quote.date})</span>}
+                      </footer>
+                    </blockquote>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Licensing / External Link */}
+            {show.data.links?.licensing && (
+              <div class="modal-section">
+                <a 
+                  href={show.data.links.licensing}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="modal-licensing-link"
+                >
+                  {show.data.status === 'touring' ? 'View current tour schedule →' : 'Request licensing information →'}
+                </a>
+              </div>
+            )}
+          </div>
+          
+          <!-- Image on Right -->
+          <div class="modal-image-container">
+            <img 
+              src={imageUrl} 
+              alt={show.data.title || 'Show image'}
+              class="modal-hero-image"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</PageLayout>
+
+<style>
+  /* Ensure show tiles work as clickable elements */
+  .show-tile {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+  }
+  
+  /* Modal content styling - Updated layout with image on right */
+  .show-modal-content {
+    max-width: 900px;
+    margin: 0 auto;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .modal-inner {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex !important;
+    align-items: flex-start !important;
+    min-height: 400px;
+  }
+  
+  .modal-image-container {
+    width: 35% !important;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+  }
+  
+  .modal-hero-image {
+    width: 100% !important;
+    height: 300px !important;
+    object-fit: cover;
+  }
+  
+  .modal-content-body {
+    padding: 2rem;
+    flex-grow: 1;
+    width: 65% !important;
+    overflow-y: auto;
+    display: flex !important;
+    flex-direction: column;
+  }
+  
+  .modal-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    color: #111827;
+    line-height: 1.2;
+    letter-spacing: 0.05em;
+    font-family: var(--font-title);
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .modal-title .modal-title-line1, .modal-title .modal-title-line2 { display: block; }
+  .modal-title .modal-title-line2 { font-size: 0.7em; opacity: 0.98; }
+  
+  .modal-status-badge {
+    position: absolute; right: 1rem; bottom: 1rem;
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 6px;
+    margin: 0;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .status-licensed { background-color: #d1fae5; color: #065f46; }
+  .status-touring { background-color: #dbeafe; color: #1e40af; }
+  .status-development { background-color: #fef3c7; color: #92400e; }
+  .status-archived { background-color: #f3f4f6; color: #374151; }
+  
+  .modal-section { margin-top: 2rem; }
+  .modal-synopsis { font-size: 1.125rem; line-height: 1.75; color: #4b5563; }
+  .modal-section-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: #111827; }
+  .modal-credits-list { list-style: disc; padding-left: 1.25rem; color: #4b5563; }
+  /* Based-on line styling under title */
+  .modal-based-on { text-align: center; font-style: italic; color: #6b7280; font-size: 1rem; margin-top: -0.25rem; margin-bottom: 1.5rem; }
+  /* Credits rendered as lines (same size as synopsis) */
+  .modal-credits-inline { color: #4b5563; font-size: 1.125rem; text-align: left; }
+  .modal-credits-inline .credit-line { margin: 0 0 0.25rem 0; }
+  /* Limit markdown to first paragraph for selected content */
+  :global(.first-paragraph-only > *:not(:first-child)) { display: none; }
+  .modal-markdown-content :global(p) { font-size: 1.125rem; line-height: 1.75; color: #4b5563; }
+  
+  .modal-quotes { display: grid; gap: 1rem; }
+  .modal-quote { background: #f9fafb; border-left: 4px solid #6366f1; padding: 1rem; border-radius: 0.375rem; }
+  .modal-quote p { color: #374151; font-size: 1.125rem; line-height: 1.625; }
+  .modal-quote footer { font-size: 0.875rem; color: #6b7280; }
+  .quote-date { margin-left: 0.5rem; }
+  
+  .modal-licensing-link {
+    display: inline-flex; align-items: center; padding: 0.75rem 1.5rem;
+    background-color: #6366f1; color: white; font-weight: 500; border-radius: 0.5rem;
+    text-decoration: none; transition: background-color 0.2s;
+  }
+  .modal-licensing-link:hover { background-color: #4f46e5; }
+  
+  /* Markdown content styling */
+  .modal-markdown-content { color: #4b5563; line-height: 1.75; }
+  .modal-markdown-content :global(h1),
+  .modal-markdown-content :global(h2),
+  .modal-markdown-content :global(h3) { color: #111827; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+  .modal-markdown-content :global(p) { margin-bottom: 1rem; }
+  .modal-markdown-content :global(ul),
+  .modal-markdown-content :global(ol) { margin-left: 1.5rem; margin-bottom: 1rem; }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .modal-inner { background: #1f2937; }
+    .modal-title, .modal-section-title { color: #f9fafb; }
+    .modal-synopsis, .modal-credits-list, .modal-markdown-content { color: #d1d5db; }
+    .modal-quote { background: #111827; border-left-color: #818cf8; }
+    .modal-quote p { color: #e5e7eb; }
+    .modal-quote footer { color: #9ca3af; }
+    .modal-markdown-content :global(h1),
+    .modal-markdown-content :global(h2),
+    .modal-markdown-content :global(h3) { color: #f9fafb; }
+    .modal-licensing-link { background-color: #818cf8; }
+    .modal-licensing-link:hover { background-color: #6366f1; }
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .modal-inner { 
+      flex-direction: column;
+    }
+    .modal-content-body { 
+      padding: 1.5rem;
+      width: 100%;
+    }
+    .modal-image-container {
+      width: 100%;
+      padding: 0;
+      order: -1; /* Image on top on mobile */
+    }
+    .modal-hero-image {
+      height: 200px;
+    }
+    .modal-title { font-size: 2rem; }
+  }
+
+  /* Show pages: tighter inline modal width for more overlay space */
+  :global(.gslide-inline) { max-width: min(58vw, 900px); }
+  @media (max-width: 768px) { :global(.gslide-inline) { max-width: 90vw; } }
+</style>

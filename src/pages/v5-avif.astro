@@ -1,0 +1,29 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import FullBleedHero from '~/components/widgets/FullBleedHero.astro';
+---
+
+<Layout>
+  <style is:inline>
+    :root {
+      /* Match page background to edges of hero */
+      --site-bg-top: #ebe0d3;
+      --site-bg-bottom: #c4ac95;
+    }
+  </style>
+  <FullBleedHero
+    title="Bree Lowdermilk"
+    subtitle="Playwright • Composer • Lyricist"
+    actions={[
+      { variant: 'primary', text: 'Listen/Watch', href: '/media' },
+      { variant: 'primary', text: 'About Bree', href: '/about' },
+    ]}
+    imageUrl="image-set(url('/images/hero/red-guitar-desktop-final.avif') type('image/avif'), url('/images/hero/red-guitar.png') type('image/png'))"
+    position="right center"
+    overlay={0}
+    minVh={108}
+    contentAlign="center"
+    contentOffsetY={16}
+    textAlign="center"
+  />
+</Layout>

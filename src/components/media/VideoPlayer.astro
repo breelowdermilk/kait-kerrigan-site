@@ -1,0 +1,147 @@
+---
+import YouTube from '~/components/YouTube.astro';
+import defaultImg from '~/assets/images/default.jpg';
+
+export interface Item {
+  title: string;
+  youtubeId?: string;
+  src?: string;
+  poster?: string;
+  notes?: string;
+}
+
+export interface Props {
+  items: Item[];
+}
+
+const { items = [] } = Astro.props as Props;
+const initialIndex = 0;
+const initial = items[initialIndex];
+---
+<div class="w-full max-w-4xl mx-auto">
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 shadow-sm">
+    <div class="mb-1 text-sm font-medium truncate" id="vp-title">{initial?.title ?? 'Untitled'}</div>
+    <div id="vp-notes" class={`mb-3 text-xs text-gray-500 dark:text-gray-400 ${initial?.notes ? '' : 'hidden'}`}>{initial?.notes ?? ''}</div>
+    <div id="vp-container" class="w-full">
+      {items.length > 0 ? (
+        <div class="player-wrap">
+          <div id="vp-slot" class="player-slot">
+            {initial?.youtubeId ? (
+              <YouTube id={initial.youtubeId} title={initial.title} />
+            ) : initial?.src ? (
+              <video
+                id="vp-video"
+                src={initial.src}
+                poster={initial.poster || defaultImg}
+                preload="metadata"
+                playsInline
+                controls
+                class="player-media"
+              />
+            ) : null}
+          </div>
+        </div>
+      ) : (
+        <div class="text-sm text-gray-500">No videos available.</div>
+      )}
+    </div>
+    <style>
+      .player-wrap{position:relative;aspect-ratio:16/9;width:100%;max-width:960px;background:#000;border-radius:.5rem}
+      .player-slot{position:absolute;inset:0}
+      .player-media{position:absolute;inset:0;width:100%;height:100%;border:0}
+    </style>
+  </div>
+
+  {items.length > 0 && (
+    <div class="mt-4">
+      <h3 class="text-sm font-semibold mb-2">Playlist</h3>
+      <ul class="divide-y divide-gray-200 dark:divide-gray-700 rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden" role="list">
+        {items.map((v, i) => (
+          <li class="bg-white dark:bg-gray-900">
+            <button
+              type="button"
+              class={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${i === initialIndex ? 'bg-gray-50 dark:bg-gray-800' : ''}`}
+              data-index={i}
+              aria-current={i === initialIndex ? 'true' : 'false'}
+            >
+              <div class="flex items-center gap-3">
+                <img src={v.poster || defaultImg} alt="" class="h-10 w-10 rounded object-cover" loading="lazy" />
+                <div class="min-w-0 flex-1">
+                  <div class="font-medium truncate">{v.title}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 truncate">{v.youtubeId ? 'YouTube' : 'MP4'}</div>
+                </div>
+              </div>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</div>
+
+<script>
+  const items = JSON.parse('{JSON.stringify(items)}');
+  const slot = document.getElementById('vp-slot') as HTMLDivElement | null;
+  const titleEl = document.getElementById('vp-title') as HTMLDivElement | null;
+  const notesEl = document.getElementById('vp-notes') as HTMLDivElement | null;
+  const listButtons = Array.from(document.querySelectorAll('[data-index]')) as HTMLButtonElement[];
+  const fallbackPoster = '{defaultImg}';
+
+  let idx = {initialIndex};
+
+  function setActiveButton(index: number) {
+    for (const btn of listButtons) {
+      const isActive = Number(btn.dataset.index) === index;
+      btn.setAttribute('aria-current', isActive ? 'true' : 'false');
+      btn.classList.toggle('bg-gray-50', isActive);
+      btn.classList.toggle('dark:bg-gray-800', isActive);
+    }
+  }
+
+  function setVideo(index: number) {
+    if (!slot || !items.length) return;
+    idx = (index + items.length) % items.length;
+    const it = items[idx];
+    setActiveButton(idx);
+    if (titleEl) titleEl.textContent = it.title || 'Untitled';
+    if (notesEl) {
+      if (it.notes) {
+        notesEl.textContent = it.notes;
+        notesEl.classList.remove('hidden');
+      } else {
+        notesEl.textContent = '';
+        notesEl.classList.add('hidden');
+      }
+    }
+    if (it.youtubeId) {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${it.youtubeId}`;
+      iframe.title = it.title || 'YouTube video';
+      iframe.loading = 'lazy';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.className = 'player-media';
+      slot.innerHTML = '';
+      slot.appendChild(iframe);
+    } else {
+      const video = document.createElement('video');
+      video.controls = true;
+      video.preload = 'metadata';
+      // @ts-ignore
+      video.playsInline = true;
+      video.src = it.src || '';
+      video.poster = it.poster || fallbackPoster;
+      video.className = 'player-media';
+      slot.innerHTML = '';
+      slot.appendChild(video);
+    }
+  }
+
+  for (const btn of listButtons) {
+    btn.addEventListener('click', () => {
+      const i = Number(btn.dataset.index);
+      setVideo(i);
+    });
+  }
+</script>
+

@@ -1,0 +1,194 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import GLightboxInit from '~/components/media/GLightboxInit.astro';
+
+// Import data
+import featuredItems from '~/data/media/featured';
+import videoItems from '~/data/media/video';
+
+const metadata = {
+  title: 'Media Gallery Demo | GLightbox',
+  description: 'Pure GLightbox demo - wall of images that open into video players',
+};
+
+// Combine all media items for the demo
+const allMediaItems = [
+  ...featuredItems,
+  ...videoItems
+];
+
+// Add some placeholder items to create a fuller gallery wall
+const placeholderItems = [
+  {
+    title: "Placeholder Video 1",
+    youtubeId: "dQw4w9WgXcQ", // Rick Roll as placeholder
+    notes: "Demo placeholder video"
+  },
+  {
+    title: "Placeholder Video 2", 
+    youtubeId: "jNQXAC9IVRw", // Another demo video
+    notes: "Another demo placeholder"
+  },
+  {
+    title: "Placeholder Video 3",
+    youtubeId: "9bZkp7q19f0", // Gangnam Style
+    notes: "Third demo placeholder"
+  },
+  {
+    title: "Placeholder Video 4",
+    youtubeId: "kffacxfA7G4", // Baby Shark (widely available)
+    notes: "Fourth demo placeholder"
+  }
+];
+
+// Combine everything for a rich demo
+const demoItems = [...allMediaItems, ...placeholderItems];
+
+// Placeholder image for items without good thumbnails
+const placeholderImage = "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&auto=format";
+
+// Function to get thumbnail or placeholder
+const getThumbnail = (item) => {
+  if (item.youtubeId) {
+    return `https://img.youtube.com/vi/${item.youtubeId}/maxresdefault.jpg`;
+  }
+  return placeholderImage;
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- GLightbox Initialization -->
+  <GLightboxInit />
+  
+  <!-- Minimal header -->
+  <div class="py-8 text-center bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">GLightbox Gallery Demo</h1>
+    <p class="text-gray-600 dark:text-gray-300">Click any image to open in GLightbox modal</p>
+  </div>
+
+  <!-- Pure GLightbox Gallery Wall -->
+  <div class="container mx-auto px-4 py-8">
+    <!-- Masonry-style grid inspired by GLightbox demo -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+      {demoItems.map((item, index) => (
+        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <a
+            href={`https://www.youtube.com/watch?v=${item.youtubeId}`}
+            class="glightbox block aspect-square relative"
+            data-gallery="media-demo"
+            data-title={item.title}
+            data-description={item.notes || `Video ${index + 1}`}
+            data-type="video"
+            data-source="youtube"
+          >
+            <!-- Image with overlay -->
+            <img 
+              src={getThumbnail(item)}
+              alt={item.title}
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+            />
+            
+            <!-- Dark overlay on hover -->
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300"></div>
+            
+            <!-- Play button - appears on hover -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div class="w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                <svg class="w-5 h-5 text-gray-800 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+            </div>
+            
+            <!-- Optional title overlay at bottom -->
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-white text-sm font-medium truncate">{item.title}</p>
+            </div>
+          </a>
+        </div>
+      ))}
+      
+      <!-- Add some extra placeholder squares to fill out the grid -->
+      {Array.from({length: 12}).map((_, i) => (
+        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <a
+            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            class="glightbox block aspect-square relative"
+            data-gallery="media-demo" 
+            data-title={`Demo Video ${i + 1}`}
+            data-description="Placeholder demo video"
+            data-type="video"
+            data-source="youtube"
+          >
+            <img 
+              src={`https://picsum.photos/400/400?random=${i + 100}`}
+              alt={`Demo ${i + 1}`}
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300"></div>
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div class="w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                <svg class="w-5 h-5 text-gray-800 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-white text-sm font-medium truncate">Demo Video {i + 1}</p>
+            </div>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Minimal footer info -->
+  <div class="py-8 text-center bg-gray-50 dark:bg-gray-900">
+    <p class="text-gray-500 dark:text-gray-400 text-sm">
+      GLightbox Demo • Click any image to open video • Use arrow keys to navigate • Press Escape to close
+    </p>
+  </div>
+</Layout>
+
+<style>
+  /* Custom hover effects for demo */
+  .grid > div:nth-child(odd) {
+    animation-delay: 0.1s;
+  }
+  
+  .grid > div:nth-child(even) {
+    animation-delay: 0.2s;
+  }
+  
+  /* Staggered hover animation */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .grid > div {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  
+  /* Beautiful grid that adapts to different screen sizes */
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+  }
+  
+  @media (min-width: 1536px) {
+    .grid {
+      grid-template-columns: repeat(8, 1fr);
+    }
+  }
+</style>

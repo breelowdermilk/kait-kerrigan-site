@@ -1,0 +1,170 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { youtubePerformances, spotifyAlbums } from '~/data/media/youtube-performances.js';
+
+const metadata = {
+  title: 'Media Collage | Bree Lowdermilk',
+  description: 'A collage-style media grid of celebrity performances',
+  openGraph: {
+    title: 'Media Collage | Bree Lowdermilk',
+    description: 'Watch Broadway stars perform Kerrigan-Lowdermilk songs',
+    type: 'website'
+  }
+};
+
+// Existing helpers from media.astro (duplicated here so this page is standalone)
+const getCelebrityImage = (performer) => {
+  const imageMap = {
+    'Aaron Tveit': '/src/assets/images/media/aaron tveit.jpg',
+    'Jeremy Jordan': '/src/assets/images/media/jeremy jordan.jpg',
+    'Rachel Zegler': '/src/assets/images/media/rachel zegler.jpg',
+    'Keala Settle': '/src/assets/images/media/keala settle.avif',
+    'Emma Hunton': '/src/assets/images/media/go-tonight.png',
+    'Emma Hunton & Krystina Alabado': '/src/assets/images/media/go-tonight.png',
+    'Grant Gustin': '/src/assets/images/media/grant gustin.jpg',
+    'Sarah Hyland & Melissa Benoist': '/src/assets/images/media/sarah hyland and melissa benoist.png',
+    'Colleen Ballinger': '/src/assets/images/media/colleen ballinger.jpg',
+    'Colton Haynes': '/src/assets/images/media/colton haynes.webp',
+    'Meghann Fahy': '/src/assets/images/media/meghann fahy.png',
+    'Michael Arden': '/src/assets/images/media/michael arden andy mientus.png',
+    'Andy Mientus': '/src/assets/images/media/michael arden andy mientus.png',
+    'Andy Mientus & Colton Haynes': '/src/assets/images/media/michael arden andy mientus.png',
+    'Andy Mientus & Steven Booth': '/src/assets/images/media/michael arden andy mientus.png',
+    'Uzo Aduba': '/src/assets/images/media/uzo aduba.webp',
+    'Ciara Renée': '/src/assets/images/media/ciara renee.jpeg',
+    'Sutton Foster': '/src/assets/images/media/sutton foster.jpg',
+    'Lindsay Mendez': '/src/assets/images/media/lindsay-mendez.jpeg',
+    'Lindsay Mendez & Andy Mientus': '/src/assets/images/media/michael arden andy mientus.png',
+    'Andy Mientus & Krysta Rodriguez': '/src/assets/images/media/michael arden andy mientus.png',
+    'Laura Osnes': '/src/assets/images/media/laura-osnes.jpg',
+    'Mandy Gonzalez': null,
+    'Carrie Manolakos': null
+  };
+  for (const [key, path] of Object.entries(imageMap)) {
+    if (performer.includes(key)) return path;
+  }
+  return null;
+};
+
+const getYouTubeThumbnail = (youtubeId) => {
+  if (!youtubeId) return null;
+  return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+};
+
+const workingYouTubeIds = {
+  'Aaron Tveit': '61EL69OZSlY',
+  'Jeremy Jordan': 'jVwtGU3KOro',
+  'Rachel Zegler': 'Z9ZMLjLqAgE',
+  'Lindsay Mendez': 'Gt76Mf6yAEo',
+  'Sarah Hyland & Melissa Benoist': 'MNKpuVxVxng',
+  'Emma Hunton & Krystina Alabado': 'DVUyVjon7r8',
+  'Michael Arden': '3or3GaYO884',
+  'Keala Settle': 'KcDMrmilTdE',
+};
+
+const performanceData = youtubePerformances
+  .filter((p) => p.priority <= 2)
+  .map((p) => {
+    const celebrityImage = getCelebrityImage(p.performer);
+    const imageUrl = celebrityImage || getYouTubeThumbnail(p.youtubeId);
+    let youtubeId = p.youtubeId;
+    for (const [performer, id] of Object.entries(workingYouTubeIds)) {
+      if (p.performer.includes(performer)) { youtubeId = id; break; }
+    }
+    const youtubeUrl = youtubeId
+      ? `https://www.youtube.com/watch?v=${youtubeId}`
+      : `https://www.youtube.com/results?search_query=${encodeURIComponent(p.searchQuery || `${p.performer} ${p.title} Kerrigan Lowdermilk`)}`;
+    return { ...p, imageUrl, youtubeUrl, youtubeId };
+  })
+  .filter((p) => p.imageUrl && p.imageUrl !== 'null');
+
+// Collage layout rules
+const getLayout = (item) => {
+  // Defaults
+  let span = 'col-span-1 row-span-1';
+  let aspect = 'aspect-square';
+
+  // Wider tiles
+  if ((item.title || '').toLowerCase().includes('go tonight') || (item.title || '') === 'Freedom') {
+    span = 'md:col-span-2';
+    aspect = 'aspect-[3/2] md:aspect-[16/9]';
+  }
+
+  // Taller tiles
+  if ((item.performer || '').includes('Uzo Aduba') || (item.performer || '').includes('Katie Thompson')) {
+    span = `${span} md:row-span-2`;
+    aspect = 'aspect-[2/3]';
+  }
+
+  return { span, aspect };
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- GLightbox CSS/JS (CDN) and page-scoped init for video links -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js" defer></script>
+  <script is:inline>
+    const setupMediaLightbox = () => {
+      if (!window.GLightbox) { setTimeout(setupMediaLightbox, 60); return; }
+      if (window.__mediaLightbox) { try { window.__mediaLightbox.destroy(); } catch {} }
+      window.__mediaLightbox = window.GLightbox({ selector: 'a.glightbox', loop: true, touchNavigation: true, closeOnOutsideClick: true, openEffect: 'fade', closeEffect: 'fade', slideEffect: 'slide', autoplayVideos: false });
+    };
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', setupMediaLightbox); } else { setupMediaLightbox(); }
+    document.addEventListener('astro:page-load', setupMediaLightbox);
+  </script>
+
+  <section class="px-4 py-16 mx-auto max-w-7xl lg:px-8 lg:py-20">
+    <h1 class="bree-h1-small mb-8">Media — Collage</h1>
+
+    <!-- Collage grid: no gaps, dense packing, varied sizes -->
+    <div class="collage-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-0">
+      {performanceData.slice(0, 30).map((item) => {
+        const { span, aspect } = getLayout(item);
+        return (
+          <div class={`group relative overflow-hidden ${span}`}>
+            <a
+              href={item.youtubeUrl}
+              class={`glightbox block relative overflow-hidden ${aspect}`}
+              data-gallery="performances-collage"
+              data-title={item.title}
+              data-description={`Performed by ${item.performer}`}
+              data-type={item.youtubeId ? "video" : "external"}
+              target={item.youtubeId ? "_self" : "_blank"}
+              rel={item.youtubeId ? "" : "noopener noreferrer"}
+            >
+              <img 
+                src={item.imageUrl}
+                alt={`${item.performer} - ${item.title}`}
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+
+              <!-- Hover overlay: large performer, smaller medium-weight title in quotes -->
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex items-center justify-center">
+                <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-center px-3">
+                  <h3 class={`${
+                    (item.performer || '').length > 24
+                      ? 'text-xl sm:text-2xl md:text-3xl'
+                      : 'text-2xl sm:text-3xl md:text-4xl'
+                  } drop-shadow-lg font-extrabold uppercase tracking-tight leading-tight`}>
+                    {item.performer}
+                  </h3>
+                  <p class="mt-2 drop-shadow-lg font-medium leading-snug text-sm sm:text-base md:text-lg opacity-95">
+                    &ldquo;{item.title}&rdquo;
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+</Layout>
+
+<style>
+.collage-grid { grid-auto-flow: dense; }
+.drop-shadow-lg { text-shadow: 0 2px 4px rgba(0,0,0,.9), 0 1px 2px rgba(0,0,0,.8); }
+</style>
+

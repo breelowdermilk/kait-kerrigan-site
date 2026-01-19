@@ -1,0 +1,241 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { youtubePerformances } from '~/data/media/youtube-performances.js';
+
+const metadata = {
+  title: 'Media Collage (4-col) | Bree Lowdermilk',
+  description: 'Standardized 4-column collage with no gaps',
+  openGraph: {
+    title: 'Media Collage (4-col) | Bree Lowdermilk',
+    description: 'Watch Broadway stars perform Kerrigan-Lowdermilk songs',
+    type: 'website'
+  }
+};
+
+// Helpers (mirrored from media.astro)
+const getCelebrityImage = (performer) => {
+  const imageMap = {
+    // Specific pairings first so they don't get shadowed by single-name matches
+    'Michael Arden & Andy Mientus': '/src/assets/images/media/michael arden andy mientus.png',
+    'Aaron Tveit': '/src/assets/images/media/aaron tveit.jpg',
+    'Jeremy Jordan': '/src/assets/images/media/jeremy jordan.jpg',
+    'Rachel Zegler': '/src/assets/images/media/rachel zegler.jpg',
+    'Keala Settle': '/src/assets/images/media/keala settle.avif',
+    'Emma Hunton': '/src/assets/images/media/go-tonight.png',
+    'Emma Hunton & Krystina Alabado': '/src/assets/images/media/go-tonight.png',
+    'Grant Gustin': '/src/assets/images/media/grant gustin.jpg',
+    'Sarah Hyland & Melissa Benoist': '/src/assets/images/media/sarah hyland and melissa benoist.png',
+    'Colleen Ballinger': '/src/assets/images/media/colleen ballinger.jpg',
+    'Colton Haynes': '/src/assets/images/media/colton haynes.webp',
+    'Meghann Fahy': '/src/assets/images/media/meghann fahy.png',
+    'Michael Arden': '/src/assets/images/media/michael-arden.jpg',
+    'Andy Mientus': '/src/assets/images/media/michael arden andy mientus.png',
+    'Andy Mientus & Colton Haynes': '/src/assets/images/media/michael arden andy mientus.png',
+    'Andy Mientus & Steven Booth': '/src/assets/images/media/michael arden andy mientus.png',
+    'Uzo Aduba': '/src/assets/images/media/uzo aduba.webp',
+    'Ciara Renée': '/src/assets/images/media/ciara renee.jpeg',
+    'Sutton Foster': '/src/assets/images/media/sutton foster.jpg',
+    // Default Lindsay image (non-Avalanche)
+    'Lindsay Mendez': '/src/assets/images/media/lindsay-mendez.jpeg',
+    'Lindsay Mendez & Andy Mientus': '/src/assets/images/media/michael arden andy mientus.png',
+    'Andy Mientus & Krysta Rodriguez': '/src/assets/images/media/michael arden andy mientus.png',
+    'Laura Osnes': '/src/assets/images/media/laura-osnes.jpg',
+    'Katie Thompson': '/src/assets/images/media/katie-thompson.jpg',
+    'Matt Doyle': '/src/assets/images/media/matt-doyle.jpg',
+    'Mandy Gonzalez': null,
+    'Carrie Manolakos': null
+  };
+  for (const [key, path] of Object.entries(imageMap)) {
+    if (performer.includes(key)) return path;
+  }
+  return null;
+};
+
+const getYouTubeThumbnail = (youtubeId) => {
+  if (!youtubeId) return null;
+  return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+};
+
+const workingYouTubeIds = {
+  'Aaron Tveit': '61EL69OZSlY',
+  'Jeremy Jordan': 'jVwtGU3KOro',
+  'Rachel Zegler': 'Z9ZMLjLqAgE',
+  'Lindsay Mendez': 'Gt76Mf6yAEo',
+  'Sarah Hyland & Melissa Benoist': 'MNKpuVxVxng',
+  'Emma Hunton & Krystina Alabado': 'DVUyVjon7r8',
+  'Michael Arden': '3or3GaYO884',
+  'Keala Settle': 'KcDMrmilTdE',
+};
+
+const performanceDataRaw = youtubePerformances
+  .filter((p) => p.priority <= 2)
+  // Remove Matt Doyle per request
+  .filter((p) => !(p.performer || '').includes('Matt Doyle'))
+  .map((p) => {
+    const celebrityImage = getCelebrityImage(p.performer);
+    // Special-case: Use separate Lindsay Mendez headshot for Avalanche
+    const lindsayAvalanche = (p.title === 'Avalanche') && (p.performer || '').includes('Lindsay Mendez');
+    const imageUrl = lindsayAvalanche
+      ? '/src/assets/images/media/lindsay-mendez-headshot.jpg' // headshot (please add file)
+      : (celebrityImage || getYouTubeThumbnail(p.youtubeId));
+    // Preserve Avalanche's specific YouTube ID; otherwise allow performer-level overrides
+    let youtubeId = p.youtubeId;
+    const allowOverride = !(lindsayAvalanche);
+    if (allowOverride) {
+      for (const [performer, id] of Object.entries(workingYouTubeIds)) {
+        if (p.performer.includes(performer)) { youtubeId = id; break; }
+      }
+    }
+    const youtubeUrl = youtubeId
+      ? `https://www.youtube.com/watch?v=${youtubeId}`
+      : `https://www.youtube.com/results?search_query=${encodeURIComponent(p.searchQuery || `${p.performer} ${p.title} Kerrigan Lowdermilk`)}`;
+    return { ...p, imageUrl, youtubeUrl, youtubeId };
+  })
+  .filter((p) => p.imageUrl && p.imageUrl !== 'null');
+
+// Curate the first rows explicitly by order and span variant
+const byId = Object.fromEntries(performanceDataRaw.map((i) => [i.id, i]));
+const curated = [];
+
+// 1: Aaron Tveit (small square)
+if (byId['run-away-aaron-tveit']) curated.push({ ...byId['run-away-aaron-tveit'], __variant: 'square' });
+// 2: Rachel Zegler (small square)
+if (byId['anyway-rachel-zegler']) curated.push({ ...byId['anyway-rachel-zegler'], __variant: 'square' });
+// 3-4-7-8: Jeremy Jordan (big 2x2)
+if (byId['run-away-jeremy-jordan']) curated.push({ ...byId['run-away-jeremy-jordan'], __variant: 'big' });
+// 5-6: Go Tonight (wide 2x1)
+if (byId['go-tonight-animatic']) curated.push({ ...byId['go-tonight-animatic'], __variant: 'wide' });
+// Next featured: Meghann Fahy (big 2x2)
+if (byId['say-the-word-meghann']) curated.push({ ...byId['say-the-word-meghann'], __variant: 'big' });
+
+const curatedIds = new Set(curated.map((i) => i.id));
+// Identify specific items
+const katieItem = performanceDataRaw.find((i) => (i.performer || '').includes('Katie Thompson'));
+const lindsayAvalancheItem = performanceDataRaw.find((i) => i.id === 'avalanche-lindsay');
+
+// Exclude items we'll insert at specific positions (Katie, Avalanche duplicate-safe)
+const excludeLater = new Set([katieItem?.id, lindsayAvalancheItem?.id].filter(Boolean));
+let rest = performanceDataRaw.filter((i) => !curatedIds.has(i.id) && !excludeLater.has(i.id));
+
+// Promote certain items earlier to help fill gaps when using dense packing
+const priorityNames = ['Sutton Foster', 'Colleen Ballinger'];
+rest = rest.sort((a, b) => {
+  const w = (x) => {
+    const perf = (x.performer || '');
+    return priorityNames.some((n) => perf.includes(n)) ? 0 : 1;
+  };
+  return w(a) - w(b);
+});
+
+// Insert Katie Thompson immediately after Keala Settle's item
+const kealaIndex = rest.findIndex((i) => i.id === 'holding-on-keala');
+if (katieItem && kealaIndex !== -1) {
+  rest.splice(kealaIndex + 1, 0, { ...katieItem, __variant: 'tall' });
+}
+
+// Ensure one Lindsay Avalanche square is included in the flow
+if (lindsayAvalancheItem) {
+  rest.push({ ...lindsayAvalancheItem, __variant: 'square' });
+}
+
+const performanceData = [...curated, ...rest];
+
+// Standardized collage rules (4 columns, no gaps)
+// Variants:
+// - square: col-span-1 row-span-1, aspect-square
+// - wide:   col-span-2 row-span-1, aspect-[2/1] (same height as two squares)
+// - tall:   col-span-1 row-span-2, aspect-[1/2] (exactly two square heights)
+const getLayout = (item) => {
+  let variant = 'square';
+
+  const title = (item.title || '').toLowerCase();
+  const perf = (item.performer || '');
+
+  // Explicit curated variants take precedence
+  if (item.__variant) {
+    variant = item.__variant;
+  } else {
+    // Make these wide by default
+    if (title.includes('go tonight') || item.title === 'Freedom') variant = 'wide';
+    // Make these tall
+    if (perf.includes('Uzo Aduba') || perf.includes('Katie Thompson')) variant = 'tall';
+  }
+
+  if (variant === 'wide') return { span: 'col-span-2 row-span-1', aspect: 'aspect-[2/1]' };
+  if (variant === 'tall') return { span: 'col-span-1 row-span-2', aspect: 'aspect-[1/2]' };
+  if (variant === 'big') return { span: 'col-span-2 row-span-2', aspect: 'aspect-square' };
+  return { span: 'col-span-1 row-span-1', aspect: 'aspect-square' };
+};
+---
+
+<Layout metadata={metadata}>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js" defer></script>
+  <script is:inline>
+    const setupMediaLightbox = () => {
+      if (!window.GLightbox) { setTimeout(setupMediaLightbox, 60); return; }
+      if (window.__mediaLightbox) { try { window.__mediaLightbox.destroy(); } catch {} }
+      window.__mediaLightbox = window.GLightbox({ selector: 'a.glightbox', loop: true, touchNavigation: true, closeOnOutsideClick: true, openEffect: 'fade', closeEffect: 'fade', slideEffect: 'slide', autoplayVideos: false });
+    };
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', setupMediaLightbox); } else { setupMediaLightbox(); }
+    document.addEventListener('astro:page-load', setupMediaLightbox);
+  </script>
+
+  <section class="px-4 py-16 mx-auto max-w-6xl lg:px-8 lg:py-20">
+    <h1 class="bree-h1-small mb-8">Media — Collage (4-col)</h1>
+
+    <!-- 4-column standardized collage; zero gaps; dense packing -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-0 collage-grid">
+      {performanceData.slice(0, 36).map((item) => {
+        const { span, aspect } = getLayout(item);
+        return (
+          <div class={`group relative overflow-hidden ${span}`}>
+            <a
+              href={item.youtubeUrl}
+              class={`glightbox block relative overflow-hidden ${aspect}`}
+              data-gallery="performances-collage-4"
+              data-title={item.title}
+              data-description={`Performed by ${item.performer}`}
+              data-type={item.youtubeId ? "video" : "external"}
+              target={item.youtubeId ? "_self" : "_blank"}
+              rel={item.youtubeId ? "" : "noopener noreferrer"}
+            >
+              <img 
+                src={item.imageUrl}
+                alt={`${item.performer} - ${item.title}`}
+                class={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+                  (item.performer || '').includes('Meghann Fahy') ? 'object-top' : 'object-center'
+                }`}
+                loading="lazy"
+              />
+
+              <!-- Hover overlay: large performer, smaller medium-weight title in quotes -->
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex items-center justify-center">
+                <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-center px-3">
+                  <h3 class={`${
+                    (item.performer || '').length > 24
+                      ? 'text-xl sm:text-2xl md:text-3xl'
+                      : 'text-2xl sm:text-3xl md:text-4xl'
+                  } drop-shadow-lg font-extrabold uppercase tracking-tight leading-tight`}>
+                    {item.performer}
+                  </h3>
+                  <p class="mt-2 drop-shadow-lg font-medium leading-snug text-sm sm:text-base md:text-lg opacity-95">
+                    &ldquo;{item.title}&rdquo;
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+</Layout>
+
+<style>
+.collage-grid { grid-auto-flow: dense; }
+.drop-shadow-lg { text-shadow: 0 2px 4px rgba(0,0,0,.9), 0 1px 2px rgba(0,0,0,.8); }
+</style>
+
+<!-- Dense packing enabled to minimize gaps. Curated top rows, then rest ordered to lift
+     Sutton Foster, Colleen Ballinger, and Matt Doyle earlier in the flow. -->

@@ -1,0 +1,204 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { youtubePerformances, spotifyAlbums } from '~/data/media/youtube-performances.js';
+
+const metadata = {
+  title: 'Media | Bree Lowdermilk',
+  description: 'Listen to Kerrigan-Lowdermilk music',
+};
+
+// Sample Spotify track data with real IDs
+const spotifyTracks = {
+  'Run Away With Me': { id: '5n8Aro6j1bEGIy7Tpo7FV7', album: 'The Mad Ones' },
+  'Freedom': { id: '0VgkVdmE4gld66l8iyGjgx', album: 'The Mad Ones' },
+  'Say the Word': { id: '3Kkjo3cT83cw09VJyrLNwZ', album: 'Our First Mistake' },
+  'When It Happens to You': { id: '3eGKL2Lh6SWjBScP2HLUNa', album: 'Our First Mistake' },
+  'Holding On': { id: '6xJ7V8tkoJNgzY8YtWFPD9', album: 'Kerrigan-Lowdermilk Live' },
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 mx-auto max-w-7xl">
+    <h1 class="text-5xl font-bold mb-12 text-center bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+      Music & Media
+    </h1>
+
+    <!-- Option 1: Minimalist Spotify Cards -->
+    <div class="mb-20">
+      <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
+        <span class="w-8 h-1 bg-green-500 rounded-full"></span>
+        Featured on Spotify
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Object.entries(spotifyTracks).slice(0, 3).map(([title, track]) => (
+          <div class="group relative">
+            <!-- Custom Card Design -->
+            <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 shadow-2xl hover:shadow-green-500/20 transition-all duration-500 hover:-translate-y-1">
+              <div class="flex items-start justify-between mb-4">
+                <div>
+                  <h3 class="text-white font-bold text-lg mb-1">{title}</h3>
+                  <p class="text-gray-400 text-sm">{track.album}</p>
+                </div>
+                <a 
+                  href={`https://open.spotify.com/track/${track.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-400 transition-colors"
+                  aria-label="Open in Spotify"
+                >
+                  <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                  </svg>
+                </a>
+              </div>
+              
+              <!-- Mini Player -->
+              <div class="bg-black/30 rounded-lg p-3">
+                <div class="flex items-center gap-3">
+                  <button class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                    <svg class="w-4 h-4 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </button>
+                  <div class="flex-1">
+                    <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
+                      <div class="h-full w-1/3 bg-green-500 rounded-full"></div>
+                    </div>
+                  </div>
+                  <span class="text-gray-400 text-xs">0:30</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Option 2: Clean Link Buttons (No iframes) -->
+    <div class="mb-20">
+      <h2 class="text-2xl font-bold mb-8">Quick Links</h2>
+      
+      <div class="flex flex-wrap gap-4">
+        {spotifyAlbums.map((album) => (
+          <a
+            href={album.spotifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-gray-200 dark:border-gray-700"
+          >
+            <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-semibold text-gray-900 dark:text-white">{album.title}</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">{album.year} • Full Album</div>
+            </div>
+            <svg class="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Option 3: Compact Embed (Dark Theme) -->
+    <div class="mb-20">
+      <h2 class="text-2xl font-bold mb-8">Latest Release</h2>
+      
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-gradient-to-br from-purple-900/20 to-pink-900/20 rounded-2xl p-8 backdrop-blur-sm border border-purple-500/20">
+          <h3 class="text-xl font-bold mb-4 text-center">The Mad Ones - Studio Cast Recording</h3>
+          <iframe
+            src={`https://open.spotify.com/embed/album/${spotifyAlbums[0].spotifyId}?utm_source=generator&theme=0`}
+            width="100%"
+            height="152"
+            frameBorder="0"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+            class="rounded-xl shadow-2xl"
+            style="border-radius: 12px;"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option 4: Visual Grid (No embeds, just beautiful cards) -->
+    <div class="mb-20">
+      <h2 class="text-2xl font-bold mb-8">Stream Everywhere</h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { platform: 'Spotify', color: 'from-green-400 to-green-600', icon: 'M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z' },
+          { platform: 'Apple Music', color: 'from-pink-400 to-red-600', icon: 'M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.04-.003-.083-.01-.124-.013H5.99c-.152.01-.303.017-.455.026a11.21 11.21 0 00-1.534.13 5.686 5.686 0 00-1.294.363 4.966 4.966 0 00-2.004 1.382 5.406 5.406 0 00-.858 1.493 8.431 8.431 0 00-.365 1.632A10.58 10.58 0 000 7.124v9.752c.007.42.04.84.104 1.256.214 1.395.808 2.57 1.78 3.457a5.154 5.154 0 002.663 1.202c.456.083.915.125 1.375.141l.24.009h12.738l.228-.008a10.431 10.431 0 001.618-.164 5.683 5.683 0 001.294-.363 4.966 4.966 0 002.004-1.382 5.406 5.406 0 00.858-1.493 8.431 8.431 0 00.365-1.632 10.58 10.58 0 00.131-2.02V7.124h-.004zm-6.914 9.52a.727.727 0 01-.094.381.578.578 0 01-.24.225.842.842 0 01-.338.08c-.115 0-.224-.02-.327-.06a.827.827 0 01-.27-.175l-3.85-3.85-3.85 3.85a.82.82 0 01-.27.175.837.837 0 01-.665-.02.578.578 0 01-.24-.225.727.727 0 01-.094-.381V8.356c0-.173.037-.324.111-.451a.814.814 0 01.308-.308.975.975 0 01.451-.111h.126c.174 0 .324.037.451.111a.814.814 0 01.308.308c.074.127.111.278.111.451v5.173l2.562-2.562a.836.836 0 01.27-.175.856.856 0 01.665.02.59.59 0 01.24.225.719.719 0 01.095.38v5.228z' },
+          { platform: 'YouTube', color: 'from-red-500 to-red-700', icon: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z' },
+          { platform: 'SoundCloud', color: 'from-orange-400 to-orange-600', icon: 'M1.175 12.225c-.051 0-.094.046-.101.1l-.233 2.154.233 2.105c.007.058.05.098.101.098.05 0 .09-.04.099-.098l.255-2.105-.255-2.154c-.009-.057-.049-.1-.099-.1zm.612 0c-.051 0-.093.047-.101.1l-.21 2.154.21 2.104c.008.053.05.1.101.1s.094-.047.101-.1l.233-2.104-.233-2.154c-.007-.053-.05-.1-.101-.1zm1.16-.363c-.051 0-.094.046-.101.1l-.18 2.517.18 2.516c.007.054.05.1.101.1.05 0 .094-.046.1-.1l.21-2.516-.21-2.517c-.006-.054-.05-.1-.1-.1zm.613.184c-.051 0-.094.046-.101.1l-.157 2.333.157 2.331c.007.054.05.1.101.1.05 0 .094-.046.1-.1l.18-2.331-.18-2.333c-.006-.054-.05-.1-.1-.1zm.612.181c-.051 0-.093.047-.1.1l-.134 2.152.134 2.15c.007.054.049.1.1.1.051 0 .094-.046.101-.1l.157-2.15-.157-2.152c-.007-.053-.05-.1-.101-.1zm.613.186c-.052 0-.094.046-.101.1l-.11 1.966.11 1.964c.007.054.049.1.101.1.051 0 .093-.046.1-.1l.134-1.964-.134-1.966c-.007-.054-.049-.1-.1-.1zm.613.185c-.052 0-.094.045-.102.1l-.086 1.78.086 1.778c.008.055.05.1.102.1.051 0 .093-.045.1-.1l.11-1.778-.11-1.78c-.007-.055-.049-.1-.1-.1zm.611.182c-.05 0-.094.046-.1.101l-.063 1.598.063 1.597c.006.055.05.1.1.1.052 0 .095-.045.102-.1l.086-1.597-.086-1.598c-.007-.055-.05-.101-.102-.101zm.614.19c-.051 0-.095.045-.102.1l-.04 1.408.04 1.406c.007.055.051.1.102.1.05 0 .094-.045.1-.1l.063-1.406-.063-1.408c-.006-.055-.05-.1-.1-.1zm.613.184c-.052 0-.095.046-.102.101l-.016 1.224.017 1.222c.006.055.049.1.101.1.052 0 .095-.045.101-.1l.04-1.222-.04-1.224c-.006-.055-.049-.101-.101-.101zm.612.188c-.052 0-.095.045-.102.1l.007 1.037-.007 1.035c.007.055.05.1.102.1.051 0 .095-.045.101-.1l.03-1.035-.03-1.037c-.006-.055-.05-.1-.101-.1zM12 10.938c-.052 0-.096.045-.102.1v1.142c.006.055.05.1.102.1.051 0 .095-.045.101-.1v-.571-.571c-.006-.055-.05-.1-.101-.1zm.612.188c-.052 0-.096.045-.103.1v.766c.007.055.051.1.103.1.051 0 .095-.045.101-.1v-.383-.383c-.006-.055-.05-.1-.101-.1zm.612.184c-.052 0-.096.046-.103.101v.582c.007.055.051.1.103.1.051 0 .095-.045.101-.1v-.291-.291c-.006-.055-.05-.101-.101-.101zm.612.185c-.052 0-.096.045-.103.1v.398c.007.055.051.1.103.1.052 0 .095-.045.102-.1v-.199-.199c-.007-.055-.05-.1-.102-.1z' }
+        ].map((platform) => (
+          <a
+            href="#"
+            class="group relative overflow-hidden rounded-2xl bg-gradient-to-br ${platform.color} p-8 text-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105"
+          >
+            <div class={`absolute inset-0 bg-gradient-to-br ${platform.color} opacity-90`}></div>
+            <div class="relative z-10">
+              <svg class="w-12 h-12 mb-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d={platform.icon}/>
+              </svg>
+              <h3 class="font-bold text-lg">{platform.platform}</h3>
+              <p class="text-sm opacity-90 mt-1">Stream Now</p>
+            </div>
+            <div class="absolute bottom-0 right-0 -mb-8 -mr-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Option 5: Single Compact Player with Custom Wrapper -->
+    <div class="mb-20">
+      <h2 class="text-2xl font-bold mb-8">Now Playing</h2>
+      
+      <div class="max-w-lg mx-auto">
+        <div class="relative">
+          <!-- Decorative Background -->
+          <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-xl opacity-30"></div>
+          
+          <!-- Player Container -->
+          <div class="relative bg-black/80 backdrop-blur-md rounded-2xl p-1 shadow-2xl">
+            <iframe
+              src={`https://open.spotify.com/embed/track/5n8Aro6j1bEGIy7Tpo7FV7?utm_source=generator&theme=0`}
+              width="100%"
+              height="80"
+              frameBorder="0"
+              allowfullscreen=""
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              style="border-radius: 12px;"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</Layout>
+
+<style>
+  /* Custom gradient text animation */
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .bg-gradient-to-r {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+  }
+
+  /* Hide Spotify logo in embeds (optional - remove if you want to keep it) */
+  iframe {
+    filter: contrast(1.1) saturate(1.2);
+  }
+</style>
