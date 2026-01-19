@@ -60,5 +60,29 @@ Warm editorial palette derived from hero photo:
 - **Body font**: Libre Baskerville
 - **UI font**: DM Sans
 
+### Shows System
+Shows use Astro content collections from `src/content/shows/*.mdx`.
+
+**Frontmatter structure:**
+```yaml
+title: "Show Name"
+status: "development" | "licensed" | "archived" | "touring"
+heroImage: "/images/shows/show-name.jpg"
+synopsis: "Short description"
+credits:
+  - "Book by Kait Kerrigan"
+  - "Music by Composer Name"
+pressQuotes:
+  - quote: "Review text"
+    outlet: "Publication"
+    date: "2024-01-01"
+```
+
+**Display order** is controlled by the `showOrder` array in `src/pages/shows/index.astro` — shows not in this array won't display.
+
+**Images** go in `public/images/shows/` and are referenced as `/images/shows/filename.jpg`.
+
+**GLightbox** powers the inline modals on the shows page.
+
 ### Vendor Integration
 `vendor/` contains a custom AstroWind integration that loads `src/config.yaml` at build time.
