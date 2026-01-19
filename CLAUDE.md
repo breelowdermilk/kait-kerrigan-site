@@ -41,7 +41,7 @@ src/
 │   └── blog/          # Blog-specific components
 ├── data/media/        # Media content data (albums, videos, streaming links)
 ├── layouts/           # Page layouts (Layout, PageLayout, MarkdownLayout)
-├── pages/             # Routes: index, about, work, songs, media, contact
+├── pages/             # Routes: index, about, shows, media, contact
 └── utils/             # Permalink generation, blog helpers, image processing
 ```
 
@@ -86,3 +86,20 @@ pressQuotes:
 
 ### Vendor Integration
 `vendor/` contains a custom AstroWind integration that loads `src/config.yaml` at build time.
+
+## Deployment
+
+**Auto-deploy via GitHub Actions** — Push to `main` triggers build and deploy to GitHub Pages.
+
+```bash
+git add -A && git commit -m "message" && git push origin main
+```
+
+Watch progress: https://github.com/breelowdermilk/kait-kerrigan-site/actions
+
+## Style Conventions
+
+- **Page titles**: ALL CAPS (SHOWS, MEDIA, CONTACT)
+- **Buttons**: Transparent background, `#3d3632` charcoal border, gold `#c9a227` on hover
+- **Portrait images**: Use `object-position: top` to avoid cutting off heads
+- **Navigation**: Main work section is "Shows" at `/shows`
