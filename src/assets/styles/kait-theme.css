@@ -92,50 +92,48 @@ body {
 .bree-h3 { font-size: 1.5rem; }
 .bree-h4 { font-size: 1.25rem; font-weight: 500; }
 
-/* Header - Warm cream background */
+/* Header - Gray background site-wide */
 .bree-header {
-  background: var(--bg-cream);
+  background: #5a5a5a !important;
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: none;
   position: sticky;
   top: 0;
   z-index: 50;
   transition: all 0.3s ease;
 }
 
-/* Header text - Gold primary */
+/* Header text - Gold on gray, bolder for readability */
 .bree-header h1,
 .bree-header nav a {
   font-family: var(--font-ui) !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.03em !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
   transition: color 0.3s ease !important;
-}
-
-.bree-header h1,
-.bree-header nav a {
-  color: var(--gold-primary) !important;
+  color: #e8b84a !important; /* Slightly brighter gold */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .bree-header nav a:hover {
-  color: var(--ochre) !important;
+  color: #f5d060 !important;
 }
 
-/* Logo styling - Gold */
+/* Logo styling - Gold, bolder */
 .bree-header .logo-text {
-  color: var(--gold-primary) !important;
+  color: #e8b84a !important;
   font-family: var(--font-display) !important;
-  font-weight: 400 !important;
+  font-weight: 600 !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-/* Scrolled header state */
+/* Scrolled header state - stays gray */
 #header.scroll {
-  background: var(--bg-white) !important;
-  box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+  background: #5a5a5a !important;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.15);
 }
-#header.scroll nav a { color: var(--gold-primary) !important; }
-#header.scroll nav a:hover { color: var(--ochre) !important; }
-#header.scroll .logo-text, #header.scroll h1 { color: var(--gold-primary) !important; }
+#header.scroll nav a { color: #d4a84b !important; }
+#header.scroll nav a:hover { color: #f0c866 !important; }
+#header.scroll .logo-text, #header.scroll h1 { color: #d4a84b !important; }
 
 /* Primary Buttons - Gold with warm charcoal text */
 .btn-primary {

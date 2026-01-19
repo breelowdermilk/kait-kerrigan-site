@@ -9,9 +9,19 @@ const shows = await getCollection('shows');
 
 // Explicit custom ordering (by slug)
 const showOrder = [
-  'ernxst',
-  'justice',
+  'the-great-gatsby',
+  'the-time-travellers-wife',
+  'the-heart',
   'the-mad-ones',
+  'indigo',
+  'henry-and-mudge',
+  'a-killer-party',
+  'justice',
+  'earthrise',
+  'father-daughter',
+  'imaginary-love',
+  'disaster-relief',
+  'ernxst',
   'ada-twist-scientist',
   'republic',
   'kill-the-boy-band',
@@ -31,8 +41,8 @@ const showsWithContent = await Promise.all(
 );
 
 const metadata = {
-  title: 'Shows - Bree Lowdermilk',
-  description: 'Explore musicals and theatrical works by Bree Lowdermilk, featuring original compositions, lyrics, and collaborative projects',
+  title: 'Shows - Kait Kerrigan',
+  description: 'Explore theatrical works by Kait Kerrigan, including Broadway, West End, Off-Broadway, and regional productions',
   openGraph: {
     type: 'website',
   },
@@ -45,7 +55,7 @@ const metadata = {
   <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js" defer></script>
   <script is:inline>
     // Version marker to verify fresh bundle in browser devtools
-    try { console.log('[shows] version: 2025-09-04T14:22Z | enforced order', ['ernxst','justice','the-mad-ones','ada-twist-scientist','republic','kill-the-boy-band','tales-from-the-bad-years']); } catch {}
+    try { console.log('[shows] version: 2026-01-18 | Kait Kerrigan shows'); } catch {}
     const setupShowsLightbox = () => {
       if (!window.GLightbox) {
         // Wait for CDN script to attach
@@ -92,7 +102,7 @@ const metadata = {
     <div class="py-12 md:py-16 lg:py-20 mx-auto">
       <header class="max-w-3xl mx-auto text-center mb-12">
         <h1 class="bree-h1-small mb-4">
-          Shows
+          SHOWS
         </h1>
       </header>
 
@@ -364,17 +374,17 @@ const metadata = {
   .modal-markdown-content :global(p) { font-size: 1.125rem; line-height: 1.75; color: #4b5563; }
   
   .modal-quotes { display: grid; gap: 1rem; }
-  .modal-quote { background: #f9fafb; border-left: 4px solid #6366f1; padding: 1rem; border-radius: 0.375rem; }
-  .modal-quote p { color: #374151; font-size: 1.125rem; line-height: 1.625; }
-  .modal-quote footer { font-size: 0.875rem; color: #6b7280; }
+  .modal-quote { background: #fdfcfa; border-left: 4px solid #c9a227; padding: 1rem; border-radius: 0.375rem; }
+  .modal-quote p { color: #3d3632; font-size: 1.125rem; line-height: 1.625; }
+  .modal-quote footer { font-size: 0.875rem; color: #5a524c; }
   .quote-date { margin-left: 0.5rem; }
-  
+
   .modal-licensing-link {
     display: inline-flex; align-items: center; padding: 0.75rem 1.5rem;
-    background-color: #6366f1; color: white; font-weight: 500; border-radius: 0.5rem;
+    background-color: #c9a227; color: white; font-weight: 500; border-radius: 0.5rem;
     text-decoration: none; transition: background-color 0.2s;
   }
-  .modal-licensing-link:hover { background-color: #4f46e5; }
+  .modal-licensing-link:hover { background-color: #b8922a; }
   
   /* Markdown content styling */
   .modal-markdown-content { color: #4b5563; line-height: 1.75; }
@@ -385,20 +395,18 @@ const metadata = {
   .modal-markdown-content :global(ul),
   .modal-markdown-content :global(ol) { margin-left: 1.5rem; margin-bottom: 1rem; }
 
-  /* Dark mode support */
-  @media (prefers-color-scheme: dark) {
-    .modal-inner { background: #1f2937; }
-    .modal-title, .modal-section-title { color: #f9fafb; }
-    .modal-synopsis, .modal-credits-list, .modal-markdown-content { color: #d1d5db; }
-    .modal-quote { background: #111827; border-left-color: #818cf8; }
-    .modal-quote p { color: #e5e7eb; }
-    .modal-quote footer { color: #9ca3af; }
-    .modal-markdown-content :global(h1),
-    .modal-markdown-content :global(h2),
-    .modal-markdown-content :global(h3) { color: #f9fafb; }
-    .modal-licensing-link { background-color: #818cf8; }
-    .modal-licensing-link:hover { background-color: #6366f1; }
-  }
+  /* Force light mode - no dark mode for modals */
+  .modal-inner { background: #ffffff !important; }
+  .modal-title, .modal-section-title { color: #3d3632 !important; }
+  .modal-synopsis, .modal-credits-list, .modal-markdown-content { color: #3d3632 !important; }
+  .modal-quote { background: #fdfcfa !important; border-left-color: #c9a227 !important; }
+  .modal-quote p { color: #3d3632 !important; }
+  .modal-quote footer { color: #5a524c !important; }
+  .modal-markdown-content :global(h1),
+  .modal-markdown-content :global(h2),
+  .modal-markdown-content :global(h3) { color: #3d3632 !important; }
+  .modal-licensing-link { background-color: #c9a227 !important; }
+  .modal-licensing-link:hover { background-color: #b8922a !important; }
   
   /* Mobile responsiveness */
   @media (max-width: 768px) {

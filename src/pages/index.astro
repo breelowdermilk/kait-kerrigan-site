@@ -1,96 +1,91 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-import FullBleedHero from '~/components/widgets/FullBleedHero.astro';
 ---
 
 <Layout>
   <style is:inline>
-    /* Gold header on gray hero - higher contrast */
-    .bree-header {
-      background: #5a5a5a !important;
-      border-bottom: none !important;
-    }
-    .bree-header .logo-text,
-    .bree-header nav a,
-    .bree-header h1 {
-      color: #d4a84b !important; /* Bright warm gold */
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-    }
-    .bree-header nav a:hover {
-      color: #f0c866 !important; /* Lighter gold on hover */
-    }
-
-    /* Hero section styling */
+    /* Hero section - white background with centered photo */
     .hero-container {
-      background-color: #5a5a5a; /* Gray that matches photo background */
-      min-height: 92vh;
+      background-color: #ffffff;
+      min-height: 88vh;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
       overflow: hidden;
-      margin-top: -76px; /* Pull up under header */
-      padding-top: 76px; /* Compensate */
     }
     .hero-image {
-      max-height: 95vh;
+      max-height: 85vh;
       width: auto;
-      max-width: 100%;
+      max-width: 55%;
       object-fit: contain;
+      margin-left: 15%;
     }
+    /* Text content positioned on left, raised high */
     .hero-content {
       position: absolute;
-      bottom: 8%;
-      left: 5%;
+      top: 25%;
+      left: 6%;
       z-index: 10;
     }
     .hero-title {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 4rem;
-      font-weight: 300;
-      color: #ffffff;
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 0, 0, 0.5);
-      margin-bottom: 0.5rem;
+      font-size: 3.2rem;
+      font-weight: 400;
+      color: #c9a227; /* Gold */
+      margin-bottom: 0.4rem;
+      line-height: 1.1;
     }
     .hero-subtitle {
-      font-size: 1.25rem;
-      color: #f0f0f0;
-      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
-      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      color: #3d3632; /* Warm charcoal */
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.03em;
     }
     .hero-buttons {
       display: flex;
-      gap: 1rem;
+      gap: 0.75rem;
     }
     .hero-btn {
       display: inline-block;
-      padding: 0.75rem 2rem;
-      background: rgba(255, 255, 255, 0.95);
-      color: #1a365d;
+      padding: 0.5rem 1.25rem;
+      background: transparent;
+      color: #3d3632;
       font-weight: 600;
       text-decoration: none;
-      border-radius: 4px;
+      border: 2px solid #3d3632;
+      border-radius: 3px;
       transition: all 0.2s ease;
+      font-size: 0.85rem;
     }
     .hero-btn:hover {
-      background: #ffffff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      background: #c9a227;
+      border-color: #c9a227;
+      color: #ffffff;
     }
     @media (max-width: 768px) {
-      .hero-title { font-size: 2.5rem; }
+      .hero-title { font-size: 2.2rem; }
+      .hero-image {
+        max-width: 90%;
+        margin-left: 0;
+      }
       .hero-content {
-        left: 50%;
-        transform: translateX(-50%);
+        position: relative;
+        top: auto;
+        left: auto;
         text-align: center;
-        bottom: 5%;
+        padding: 1.5rem;
       }
       .hero-buttons { justify-content: center; }
+      .hero-container {
+        flex-direction: column;
+        min-height: auto;
+        padding: 2rem 0;
+      }
     }
   </style>
 
   <section class="hero-container">
-    <img src="/images/kait-hero.jpg" alt="Kait Kerrigan" class="hero-image" />
     <div class="hero-content">
       <h1 class="hero-title">Kait Kerrigan</h1>
       <p class="hero-subtitle">Bookwriter • Lyricist • Playwright</p>
@@ -99,5 +94,6 @@ import FullBleedHero from '~/components/widgets/FullBleedHero.astro';
         <a href="/shows" class="hero-btn">Shows</a>
       </div>
     </div>
+    <img src="/images/kait-hero.jpg" alt="Kait Kerrigan" class="hero-image" />
   </section>
 </Layout>
