@@ -53,12 +53,25 @@ The `src/data/media/` directory contains typed data structures for:
 - **index.ts** - Central exports and search utilities
 
 ### Custom Theme (kait-theme.css)
-Warm editorial palette derived from hero photo:
+Warm editorial palette derived from hero photo (mustard sweater, warm gray background):
+
+**Colors:**
 - **Gold primary**: `#c9a227` (titles, accents, buttons)
-- **Charcoal**: `#3d3632` (body text)
+- **Gold bright**: `#e8b84a` (header text - brighter for contrast on gray)
+- **Charcoal**: `#3d3632` (body text - warm toned, not cool)
+- **Header gray**: `#5a5a5a` (site-wide header background)
+
+**Typography:**
 - **Display font**: Cormorant Garamond
 - **Body font**: Libre Baskerville
-- **UI font**: DM Sans
+- **UI font**: DM Sans (weight 700 in header for readability)
+
+**Key Design Decisions:**
+- Site-wide gray header (`#5a5a5a`) with bright gold text
+- Homepage: white background, photo right, gold title left (at top 25%)
+- Interior pages: white background, warm charcoal text
+- No dark mode (`light:only` in config)
+- GLightbox modals: white background, charcoal text, gold accents (replaced all blue/indigo)
 
 ### Shows System
 Shows use Astro content collections from `src/content/shows/*.mdx`.
