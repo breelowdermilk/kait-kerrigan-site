@@ -63,7 +63,11 @@ const metadata = {
         <!-- Contact Form -->
         <div>
           <h2 class="text-xl font-bold mb-6 tracking-wide">CONTACT KAIT</h2>
-          <form class="space-y-6" method="POST" action="#" netlify>
+          <form class="space-y-6" method="POST" action="https://api.web3forms.com/submit">
+            <input type="hidden" name="access_key" value="c73d37a7-02d2-4638-9964-afe4c5bd554d" />
+            <input type="hidden" name="from_name" value="Kait Kerrigan Site" />
+            <input type="hidden" name="redirect" value="https://kaitkerrigan.com/contact?sent=1" />
+            <input type="checkbox" name="botcheck" class="hidden" style="display:none" tabindex="-1" autocomplete="off" />
             <div>
               <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 NAME
