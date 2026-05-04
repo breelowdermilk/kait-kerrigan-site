@@ -11,7 +11,7 @@ export const youtubePerformances = [
     venue: "Zipper Theatre (2008)",
     searchQuery: "Aaron Tveit Run Away With Me Kerrigan Lowdermilk",
     youtubeId: "61EL69OZSlY", // Based on search results
-    thumbnail: "/src/assets/images/media/run-away-aaron-tveit.png",
+    thumbnail: "/src/assets/images/media/run-away-aaron-tveit.jpg",
     priority: 1
   },
   {
